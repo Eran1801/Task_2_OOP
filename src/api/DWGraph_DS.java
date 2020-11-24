@@ -1,8 +1,11 @@
 package api;
 
+import org.w3c.dom.Node;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class DWGraph_DS implements directed_weighted_graph {
 
@@ -12,6 +15,11 @@ public class DWGraph_DS implements directed_weighted_graph {
 
     public DWGraph_DS() {
         this.nodes = new HashMap<Integer, node_data>();
+    }
+
+    public DWGraph_DS(directed_weighted_graph graph) {
+        this.numOfEdges = graph.edgeSize();
+        this.modeCount = graph.getMC();
     }
 
 
@@ -87,12 +95,12 @@ public class DWGraph_DS implements directed_weighted_graph {
 
     @Override
     public edge_data removeEdge(int src, int dest) {
-        NodeData nodeToRemove = (NodeData) this.nodes.get(src);
-        if (!nodeToRemove.hasNi(dest)) return null; //return null if there is no edge from src to dest
-        EdgeData edgeToRemove = (EdgeData) nodeToRemove.getEdge(dest);
+        NodeData nodeToRemoveEdgeFrom = (NodeData) this.nodes.get(src);
+        if (!nodeToRemoveEdgeFrom.hasNi(dest)) return null; //return null if there is no edge from src to dest
+        EdgeData edgeToRemove = (EdgeData) nodeToRemoveEdgeFrom.getEdge(dest);
         NodeData nodeConnectedFromThisNode = (NodeData) nodes.get(edgeToRemove.getDest()); //get the node that the edge is directed at (the destination node)
-        nodeConnectedFromThisNode.getEdgesConnectedToThisNode().remove(nodeToRemove.getKey()); //remove the edge from the destination node
-        nodeToRemove.getNeighborEdges().remove(edgeToRemove.getDest()); //remove the edge from the source node
+        nodeConnectedFromThisNode.getEdgesConnectedToThisNode().remove(nodeToRemoveEdgeFrom.getKey()); //remove the edge from the destination node
+        nodeToRemoveEdgeFrom.getNeighborEdges().remove(edgeToRemove.getDest()); //remove the edge from the source node
         this.modeCount++;
         this.numOfEdges--;
         return edgeToRemove;
@@ -112,6 +120,16 @@ public class DWGraph_DS implements directed_weighted_graph {
     public int getMC() {
         return this.modeCount;
     }
+
+    public directed_weighted_graph deepCopy() {
+        DWGraph_DS copyGraph = new DWGraph_DS(this); //create a new graph with the original graph data (only primitives)
+        HashMap<Integer, node_data> copyNodesMap = new HashMap<Integer, node_data>(); //create a new nodes HashMap for the new graph
+        for (node_data node : nodes.values()) { //loop through all nodes in the original graph
+            copyNodesMap.put(node.getKey(), new NodeData((NodeData) node)); //makes a duplicate of the original HashMap
+        }
+        copyGraph.nodes = copyNodesMap; //set the new graph nodes to the new HashMap we made.
+        return copyGraph;
+    }
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -125,6 +143,21 @@ class NodeData implements node_data {
     private String info;
     private int tag;
 
+    public NodeData(NodeData node) { // Constructor for the DeepCopy
+        this.key = node.getKey();
+        this.info = node.getInfo();
+        this.tag = node.getTag();
+
+        this.neighborEdges = new HashMap<Integer, edge_data>();
+        for (edge_data edge : node.neighborEdges.values()) {
+            this.neighborEdges.put(edge.getDest(), new EdgeData((EdgeData) edge));
+        }
+
+        this.edgesConnectedToThisNode = new HashMap<Integer, edge_data>();
+        for (edge_data edge : node.edgesConnectedToThisNode.values()) {
+            this.edgesConnectedToThisNode.put(edge.getSrc(), new EdgeData((EdgeData)edge));
+        }
+    }
 
     public NodeData(int key) {
         this.key = key;
@@ -195,6 +228,10 @@ class NodeData implements node_data {
         return this.neighborEdges.get(nodeKey) != null ? true : false;
     }
 
+    public HashMap<Integer, edge_data> getNi() {
+        return neighborEdges;
+    }
+
     public edge_data getEdge(int nodeKey) {
         return this.neighborEdges.get(nodeKey);
     }
@@ -224,6 +261,14 @@ class EdgeData implements edge_data {
         this.weight = weight;
         this.info = "";
         this.tag = 0;
+    }
+
+    public EdgeData(EdgeData edge) { // Constructor for the DeepCopy
+        this.sourceKey = edge.sourceKey;
+        this.destKey = edge.destKey;
+        this.weight = edge.weight;
+        this.info = edge.info;
+        this.tag = edge.tag;
     }
 
     @Override

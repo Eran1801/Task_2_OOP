@@ -1,4 +1,4 @@
-### This is a submission of EX1 by Etay Matzliah - 205987795 and Eran Levy - 311382360 
+### This is a submission of EX2 by Etay Matzliah - 205987795 and Eran Levy - 311382360 
 
 DWGraph_DS is an implementation of directed_weighted_graph which represents a Directed Weighted Graph.
 a Directed Weighted Graph holds Nodes and each Edge between nodes is weighted and directed.

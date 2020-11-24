@@ -144,9 +144,10 @@ class NodeData implements node_data {
     private int tag;
 
     public NodeData(NodeData node) { // Constructor for the DeepCopy
-        this.key = node.getKey();
-        this.info = node.getInfo();
-        this.tag = node.getTag();
+        this.key = node.key;
+        this.info = node.info;
+        this.tag = node.tag;
+        this.weight = node.weight;
 
         this.neighborEdges = new HashMap<Integer, edge_data>();
         for (edge_data edge : node.neighborEdges.values()) {
@@ -163,7 +164,7 @@ class NodeData implements node_data {
         this.key = key;
         this.neighborEdges = new HashMap<Integer, edge_data>();
         this.edgesConnectedToThisNode = new HashMap<Integer, edge_data>();
-        this.weight = 0.0;
+        this.weight = Double.MAX_VALUE;
         this.info = "";
         this.tag = 0;
     }
@@ -247,7 +248,7 @@ class NodeData implements node_data {
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-class EdgeData implements edge_data {
+class EdgeData implements edge_data, Comparable<edge_data> {
 
     private int sourceKey;
     private int destKey;
@@ -259,7 +260,15 @@ class EdgeData implements edge_data {
         this.sourceKey = sourceKey;
         this.destKey = destKey;
         this.weight = weight;
-        this.info = "";
+        this.info = "WHITE";
+        this.tag = 0;
+    }
+
+    public EdgeData(int sourceKey, int destKey, double weight, String info) {
+        this.sourceKey = sourceKey;
+        this.destKey = destKey;
+        this.weight = weight;
+        this.info = info;
         this.tag = 0;
     }
 
@@ -306,4 +315,8 @@ class EdgeData implements edge_data {
         this.tag = t;
     }
 
-}	
+    @Override
+    public int compareTo(edge_data o) {
+        return this.weight < o.getWeight() ? -1 : this.weight > o.getWeight() ? 1 : 0;
+    }
+}

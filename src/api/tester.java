@@ -25,17 +25,17 @@ public class tester {
 		g.addNode(node6);
 		
 		
-		g.connect(node0.getKey(), node1.getKey(), 1);
-		g.connect(node0.getKey(), node2.getKey(), 2);
-		g.connect(node1.getKey(), node4.getKey(), 3);
-		g.connect(node2.getKey(), node5.getKey(), 4);
-		g.connect(node3.getKey(), node2.getKey(), 5);
-		g.connect(node3.getKey(), node6.getKey(), 6);
-		g.connect(node3.getKey(), node5.getKey(), 7);
-		g.connect(node4.getKey(), node3.getKey(), 8);
+		g.connect(node0.getKey(), node1.getKey(), 3);
+		g.connect(node0.getKey(), node2.getKey(), 1);
+		g.connect(node1.getKey(), node4.getKey(), 7);
+		g.connect(node2.getKey(), node5.getKey(), 3);
+		g.connect(node3.getKey(), node2.getKey(), 2);
+		g.connect(node3.getKey(), node6.getKey(), 4);
+		g.connect(node3.getKey(), node5.getKey(), 1);
+		g.connect(node4.getKey(), node3.getKey(), 3);
 		
 		
-		System.out.println(gAlgo.isConnected());
+		System.out.println(gAlgo.shortestPathDist(0,3));
 
 
 		DWGraph_DS g2 = new DWGraph_DS();

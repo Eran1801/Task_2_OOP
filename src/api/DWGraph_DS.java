@@ -140,8 +140,8 @@ class NodeData implements node_data {
     private HashMap<Integer, edge_data> neighborEdges; //edges coming out from this node.
     private HashMap<Integer, edge_data> edgesConnectedToThisNode; // when we want to remove a node, we need to have a reference to the nodes that are connected to this node.
     private double weight;
-    private String info;
-    private int tag;
+    private String info; //represents if we visited the node in algorithms (WHITE = Not visited, BLACK= = visited)
+    private int tag; //represents parent key in algorithms
 
     public NodeData(NodeData node) { // Constructor for the DeepCopy
         this.key = node.key;
@@ -166,7 +166,7 @@ class NodeData implements node_data {
         this.edgesConnectedToThisNode = new HashMap<Integer, edge_data>();
         this.weight = Double.MAX_VALUE;
         this.info = "";
-        this.tag = 0;
+        this.tag = -1;
     }
 
     public void connectEdge(NodeData destNode, double w) {

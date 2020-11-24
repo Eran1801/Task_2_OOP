@@ -1,5 +1,7 @@
 package api;
 
+import java.util.List;
+
 public class tester {
 	public static void main(String[] args) {
 
@@ -33,9 +35,14 @@ public class tester {
 		g.connect(node3.getKey(), node6.getKey(), 4);
 		g.connect(node3.getKey(), node5.getKey(), 1);
 		g.connect(node4.getKey(), node3.getKey(), 3);
-		
-		
-		System.out.println(gAlgo.shortestPathDist(0,3));
+
+
+		List<node_data> list = gAlgo.shortestPath(0,3);
+		List<node_data> compareList = gAlgo.shortestPath(0,3);
+		for ( node_data node : list) {
+			System.out.println(node.getKey());
+		}
+
 
 
 		DWGraph_DS g2 = new DWGraph_DS();

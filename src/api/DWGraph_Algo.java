@@ -78,24 +78,23 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         sourceNode.setInfo("BLACK"); //mark that node as visited.
 
         while (!pq.isEmpty()) { //loop through all edges in the priority queue
-            EdgeData prioritezedEdge = pq.poll();
+            EdgeData prioritezedEdge = pq.poll(); //take out the lightest Edge from the priority queue
             prioritezedEdge.setInfo("BLACK"); //mark that edge as visited.
 
             double edgeWeight = prioritezedEdge.getWeight();
-            double prioritzedNodeWeight = g.getNode(prioritezedEdge.getSrc()).getWeight();
 
             NodeData neighborNode = (NodeData) g.getNode(prioritezedEdge.getDest());
             if (edgeWeight < neighborNode.getWeight()) //if we found a path with less weight - update the node weight
                 neighborNode.setWeight(edgeWeight); //update the weight of the neighbor node
-            if (neighborNode.getInfo() != "BLACK") {
-                Collection<edge_data> neighborNodeEdges = neighborNode.getNeighborEdges().values();
+            if (neighborNode.getInfo() != "BLACK") { //if we haven't visited this node yet
+                Collection<edge_data> neighborNodeEdges = neighborNode.getNeighborEdges().values(); // get all edges of neighborNode
                 for (edge_data neighborNodeEdge : neighborNodeEdges) {
                     int newSource = neighborNodeEdge.getSrc();
                     int newDest = neighborNodeEdge.getDest();
                     double newWeight = neighborNodeEdge.getWeight() + neighborNode.getWeight();
                     String newInfo = neighborNodeEdge.getInfo();
-                    EdgeData updatedNeighborNodeEdge = new EdgeData(newSource, newDest, newWeight, newInfo);
-                     pq.add(updatedNeighborNodeEdge);
+                    EdgeData updatedNeighborNodeEdge = new EdgeData(newSource, newDest, newWeight, newInfo); //make new Edge with updated weight
+                    pq.add(updatedNeighborNodeEdge); //add the edge to the queue
                 }
             }
         }
@@ -104,9 +103,57 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
     @Override
     public List<node_data> shortestPath(int src, int dest) {
-        // TODO Auto-generated method stub
-        return null;
+
+        DWGraph_DS g = (DWGraph_DS) this.copy();
+        PriorityQueue<EdgeData> pq = new PriorityQueue<>();
+
+        NodeData sourceNode = (NodeData) g.getNode(src); //get the source node
+        NodeData destNode = (NodeData) g.getNode(dest); //get the destination node
+
+        Collection<edge_data> neighborEdgesCollection = sourceNode.getNeighborEdges().values();
+        for (edge_data neighborEdge : neighborEdgesCollection) {
+            pq.add((EdgeData) neighborEdge); //add all edges that coming out from the source node to the priority queue
+        }
+        sourceNode.setWeight(0); //set the weight of the source node to 0
+        sourceNode.setInfo("BLACK"); //mark that node as visited.
+
+        while (!pq.isEmpty()) { //loop through all edges in the priority queue
+            EdgeData prioritezedEdge = pq.poll(); //take out the lightest Edge from the priority queue
+            prioritezedEdge.setInfo("BLACK"); //mark that edge as visited.
+
+            double edgeWeight = prioritezedEdge.getWeight();
+
+            NodeData neighborNode = (NodeData) g.getNode(prioritezedEdge.getDest());
+            if (edgeWeight < neighborNode.getWeight()) //if we found a path with less weight - update the node weight
+                neighborNode.setWeight(edgeWeight); //update the weight of the neighbor node
+            neighborNode.setTag(prioritezedEdge.getSrc()); //set the parent of neighborNode
+            if (neighborNode.getInfo() != "BLACK") { //if we haven't visited this node yet
+                Collection<edge_data> neighborNodeEdges = neighborNode.getNeighborEdges().values(); // get all edges of neighborNode
+                for (edge_data neighborNodeEdge : neighborNodeEdges) {
+                    int newSource = neighborNodeEdge.getSrc();
+                    int newDest = neighborNodeEdge.getDest();
+                    double newWeight = neighborNodeEdge.getWeight() + neighborNode.getWeight();
+                    String newInfo = neighborNodeEdge.getInfo();
+                    EdgeData updatedNeighborNodeEdge = new EdgeData(newSource, newDest, newWeight, newInfo); //make new Edge with updated weight
+                    pq.add(updatedNeighborNodeEdge); //add the edge to the queue
+                }
+            }
+        }
+
+        NodeData nextParent = destNode;
+        if (nextParent.getTag() == -1) return null; //there's no path from src to dest.
+        Stack<node_data> pathReversed = new Stack<node_data>(); //represents the path from the source to the destination
+        while (nextParent.getTag() != -1) { //while we did not reach the src
+            pathReversed.add(nextParent); //add the node the the path.
+            nextParent = (NodeData) g.getNode(nextParent.getTag());
+        }
+        pathReversed.add(nextParent); // add the last node
+        Stack<node_data> path = new Stack<node_data>(); //used to reverse the order of the path, so the source will be first and dest last.
+        while (pathReversed.size() > 0)
+            path.add(pathReversed.pop());
+        return path;
     }
+
 
     @Override
     public boolean save(String file) {

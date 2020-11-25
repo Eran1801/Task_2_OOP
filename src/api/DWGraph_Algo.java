@@ -64,6 +64,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
     @Override
     public double shortestPathDist(int src, int dest) {
+        if (src == dest) return 0;
         DWGraph_DS g = (DWGraph_DS) this.copy();
         PriorityQueue<EdgeData> pq = new PriorityQueue<>();
 
@@ -96,6 +97,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
                     EdgeData updatedNeighborNodeEdge = new EdgeData(newSource, newDest, newWeight, newInfo); //make new Edge with updated weight
                     pq.add(updatedNeighborNodeEdge); //add the edge to the queue
                 }
+                neighborNode.setInfo("BLACK"); //mark that node as visited.
             }
         }
         return destNode.getWeight() != Double.MAX_VALUE ? destNode.getWeight() : -1; //return the destination weight or -1 if there is no path from src to dest.
@@ -103,12 +105,17 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
     @Override
     public List<node_data> shortestPath(int src, int dest) {
-
         DWGraph_DS g = (DWGraph_DS) this.copy();
         PriorityQueue<EdgeData> pq = new PriorityQueue<>();
 
         NodeData sourceNode = (NodeData) g.getNode(src); //get the source node
         NodeData destNode = (NodeData) g.getNode(dest); //get the destination node
+
+        if ( src == dest) {
+            List<node_data> list = new LinkedList<>();
+            list.add(sourceNode);
+            return list;
+        }
 
         Collection<edge_data> neighborEdgesCollection = sourceNode.getNeighborEdges().values();
         for (edge_data neighborEdge : neighborEdgesCollection) {
@@ -124,9 +131,10 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             double edgeWeight = prioritezedEdge.getWeight();
 
             NodeData neighborNode = (NodeData) g.getNode(prioritezedEdge.getDest());
-            if (edgeWeight < neighborNode.getWeight()) //if we found a path with less weight - update the node weight
+            if (edgeWeight < neighborNode.getWeight()) { //if we found a path with less weight - update the node weight
                 neighborNode.setWeight(edgeWeight); //update the weight of the neighbor node
-            neighborNode.setTag(prioritezedEdge.getSrc()); //set the parent of neighborNode
+                neighborNode.setTag(prioritezedEdge.getSrc()); //set the parent of neighborNode
+            }
             if (neighborNode.getInfo() != "BLACK") { //if we haven't visited this node yet
                 Collection<edge_data> neighborNodeEdges = neighborNode.getNeighborEdges().values(); // get all edges of neighborNode
                 for (edge_data neighborNodeEdge : neighborNodeEdges) {
@@ -137,6 +145,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
                     EdgeData updatedNeighborNodeEdge = new EdgeData(newSource, newDest, newWeight, newInfo); //make new Edge with updated weight
                     pq.add(updatedNeighborNodeEdge); //add the edge to the queue
                 }
+                neighborNode.setInfo("BLACK"); //mark that node as visited.
             }
         }
 

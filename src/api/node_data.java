@@ -6,6 +6,7 @@ package api;
  * @author boaz.benmoshe
  *
  */
+
 public interface node_data {
 	/**
 	 * Returns the key (id) associated with this node.

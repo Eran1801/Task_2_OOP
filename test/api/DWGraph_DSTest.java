@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DWGraph_DSTest {
 
-    //Creates a new 5 nodes graph
+    //Creates a new 11 nodes graph with no connections
     directed_weighted_graph createSmallGraph() {
         directed_weighted_graph g = new DWGraph_DS();
 
@@ -45,7 +45,7 @@ class DWGraph_DSTest {
     @BeforeAll
     public static void start_program() {
         System.out.println();
-        System.out.println("---- Starts the test for WGraph_DS class ----");
+        System.out.println("---- Starts the test for DWGraph_DS class ----");
     }
 
     @Test

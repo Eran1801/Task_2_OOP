@@ -163,7 +163,7 @@ class NodeData implements node_data {
         this.neighborEdges = new HashMap<Integer, edge_data>();
         this.edgesConnectedToThisNode = new HashMap<Integer, edge_data>();
         this.weight = Double.MAX_VALUE;
-        this.info = "";
+        this.info = "WHITE";
         this.tag = -1;
     }
 
@@ -241,6 +241,42 @@ class NodeData implements node_data {
 
     public HashMap<Integer, edge_data> getEdgesConnectedToThisNode() {
         return this.edgesConnectedToThisNode;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        NodeData compareToNode = (NodeData)o; //cast to NodeData
+
+        //Compare keys (There is no need to compare other primitives that used for algorithms, because there is no need for them to be equal)
+        if (this.getKey() != compareToNode.getKey())
+            return false;
+
+        //if size of neighborEdges is different between the two nodes
+        if (this.neighborEdges.size() != compareToNode.neighborEdges.size()) return false;
+
+        //loop through all neighborEdges in the original node and compare them to the other node neighborEdges (using keys to get the edge data)
+        //(There is no need to compare other variables that used for algorithms, because there is no need for them to be equal)
+        for (int edgeKey : this.neighborEdges.keySet()) {
+            EdgeData originalEdge = (EdgeData)this.neighborEdges.get(edgeKey);
+            EdgeData compareToEdge = (EdgeData)compareToNode.neighborEdges.get(edgeKey);
+            if (originalEdge.getSrc() != compareToEdge.getSrc() || originalEdge.getDest() != compareToEdge.getDest()
+            || originalEdge.getWeight() != compareToEdge.getWeight())
+                return false;
+        }
+
+        //if size of edgesConnectedToThisNode is different between the two nodes
+        if (this.edgesConnectedToThisNode.size() != compareToNode.edgesConnectedToThisNode.size()) return false;
+
+        //loop through all edgesConnectedToThisNode in the original node and compare them to the other node edgesConnectedToThisNode (using keys to get the edge data)
+        //(There is no need to compare other variables that used for algorithms, because there is no need for them to be equal)
+        for (int edgeKey : this.edgesConnectedToThisNode.keySet()) {
+            EdgeData originalEdge = (EdgeData)this.edgesConnectedToThisNode.get(edgeKey);
+            EdgeData compareToEdge = (EdgeData)compareToNode.edgesConnectedToThisNode.get(edgeKey);
+            if (originalEdge.getSrc() != compareToEdge.getSrc() || originalEdge.getDest() != compareToEdge.getDest()
+                    || originalEdge.getWeight() != compareToEdge.getWeight())
+                return false;
+        }
+        return true;
     }
 }
 

@@ -41,5 +41,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="gson-2.8.6" level="project" />
+    <orderEntry type="library" name="annotations-13.0" level="project" />
   </component>
 </module>

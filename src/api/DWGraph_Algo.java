@@ -1,7 +1,11 @@
 package api;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.PrintWriter;
 import java.util.*;
 
 public class DWGraph_Algo implements dw_graph_algorithms {
@@ -113,7 +117,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         NodeData sourceNode = (NodeData) g.getNode(src); //get the source node
         NodeData destNode = (NodeData) g.getNode(dest); //get the destination node
 
-        if ( src == dest) {
+        if (src == dest) {
             List<node_data> list = new LinkedList<>();
             list.add(sourceNode);
             return list;
@@ -169,14 +173,92 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     @Override
     public boolean save(String file) {
 
-        Gson gson = new Gson();
-        // TODO Auto-generated method stub
-        return false;
+        // create two arrays for the nodes and the edges
+        JsonArray nodesJsonArray = new JsonArray();
+        JsonArray edgesJsonArray = new JsonArray();
+
+        // going through all the nodes&edges in the graph and put them in the Json file
+        Iterator<node_data> nitr = graph.getV().iterator();
+        while (nitr.hasNext()) {
+            node_data node = nitr.next();
+            JsonObject nodeJson = new JsonObject();
+            nodeJson.addProperty("id", node.getKey());
+            nodeJson.addProperty("pos", node.getLocation().toString());
+            nodesJsonArray.add(nodeJson);
+            Iterator<edge_data> eitr = ((NodeData) node).getNeighborEdges().values().iterator();
+            while (eitr.hasNext()) {
+                edge_data edge = eitr.next();
+                JsonObject edgeJson = new JsonObject();
+                edgeJson.addProperty("src", edge.getSrc());
+                edgeJson.addProperty("w", edge.getWeight());
+                edgeJson.addProperty("dest", edge.getDest());
+                edgesJsonArray.add(edgeJson);
+            }
+        }
+        JsonObject graphJson = new JsonObject();
+        graphJson.add("Nodes", nodesJsonArray);
+        graphJson.add("Edges", edgesJsonArray);
+
+
+        try {
+            PrintWriter pw = new PrintWriter(new File(file));
+            pw.write(graphJson.toString());
+            pw.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 
     @Override
     public boolean load(String file) {
-        // TODO Auto-generated method stub
-        return false;
+
+        try {
+            FileReader reader = new FileReader(file);
+            JsonElement jsonElement = JsonParser.parseReader(reader).getAsJsonObject();
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+
+            DWGraph_DS loadedGraphFromJson = new DWGraph_DS();
+
+            JsonArray nodesJsonArray = jsonObject.getAsJsonArray("Nodes");
+            JsonArray edgesJsonarray = jsonObject.getAsJsonArray("Edges");
+
+            // for the nodes
+            for (int i = 0; i < nodesJsonArray.size(); i++) {
+                JsonObject nodeJsonObject = nodesJsonArray.get(i).getAsJsonObject();
+                String pos = nodeJsonObject.get("pos").getAsString();
+                int key = nodeJsonObject.get("id").getAsInt();
+                String[] posArrayString = pos.split(",");
+                Double[] posArray = new Double[posArrayString.length];
+                for (int j = 0; j < posArrayString.length; j++) {
+                    posArray[j] = Double.parseDouble(posArrayString[j]);
+                }
+                node_data newNode = new NodeData(key);
+                geo_location newLocation = new Location(posArray[0], posArray[1], posArray[2]);
+                newNode.setLocation(newLocation);
+                loadedGraphFromJson.addNode(newNode);
+            }
+
+            // for the edges
+            for (int i = 0; i < edgesJsonarray.size(); i++) {
+                JsonObject edgeJsonObject = edgesJsonarray.get(i).getAsJsonObject();
+                int srcJson = edgeJsonObject.get("src").getAsInt();
+                int destJson = edgeJsonObject.get("dest").getAsInt();
+                double weightJson = edgeJsonObject.get("w").getAsDouble();
+                loadedGraphFromJson.connect(srcJson, destJson, weightJson);
+
+            }
+            System.out.println(loadedGraphFromJson.toString());
+            this.graph = loadedGraphFromJson;
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
+
 }

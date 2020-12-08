@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DWGraph_AlgoTest {
 
-    final double epsilon=0.0000001;
+    final double epsilon = 0.0000001;
 
     //Creates a new 6 nodes graph with some connections
     directed_weighted_graph createSmallGraphWithSomeConnections() {
@@ -80,12 +80,12 @@ class DWGraph_AlgoTest {
 
 
         g.connect(0, 5, 2.6);
-        assertEquals(ga.shortestPathDist(2, 5), 6.1, epsilon );
+        assertEquals(ga.shortestPathDist(2, 5), 6.1, epsilon);
 
         g.removeEdge(4, 0);
-        assertEquals(ga.shortestPathDist(2, 5), -1, epsilon );
+        assertEquals(ga.shortestPathDist(2, 5), -1, epsilon);
 
-        assertEquals(ga.shortestPathDist(2, 2), 0, epsilon ); //there's no path from a node to itself
+        assertEquals(ga.shortestPathDist(2, 2), 0, epsilon); //there's no path from a node to itself
 
     }
 
@@ -96,36 +96,45 @@ class DWGraph_AlgoTest {
         dw_graph_algorithms ga = new DWGraph_Algo();
         ga.init(g);
 
-        List<node_data> list = ga.shortestPath(2,5);
+        List<node_data> list = ga.shortestPath(2, 5);
         assertEquals(list, null);
 
         g.connect(5, 0, 4.5);
-        list = ga.shortestPath(2,5);
+        list = ga.shortestPath(2, 5);
         assertEquals(list, null);
 
         g.connect(0, 5, 2.6);
-        list = ga.shortestPath(2,5);
+        list = ga.shortestPath(2, 5);
         List<node_data> compareList = new LinkedList<>();
         compareList.add(g.getNode(2));
         compareList.add(g.getNode(4));
         compareList.add(g.getNode(0));
         compareList.add(g.getNode(5));
-        for (int i=0; i<compareList.size(); i++) {
+        for (int i = 0; i < compareList.size(); i++) {
             assertEquals(compareList.get(i), list.get(i));
         }
 
         g.removeEdge(4, 0);
-        list = ga.shortestPath(2,5);
+        list = ga.shortestPath(2, 5);
         assertEquals(list, null);
     }
 
     @Test
-    void save() {
+    void save_and_load() {
+        directed_weighted_graph g = createSmallGraphWithSomeConnections();
+        dw_graph_algorithms ga = new DWGraph_Algo();
+        ga.init(g);
 
+        ga.save("graph.json");
+
+        assertEquals(ga.getGraph().getEdge(0, 3).getWeight(), 2.5, epsilon);
+
+        g.connect(0, 3, 3.5);
+
+        assertEquals(ga.getGraph().getEdge(0, 3).getWeight(), 3.5, epsilon);
+
+        ga.load("graph.json");
+
+        assertEquals(ga.getGraph().getEdge(0, 3).getWeight(), 2.5, epsilon);
     }
-
-    @Test
-    void load() {
-    }
-
 }

@@ -1,9 +1,10 @@
 package api;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-
 
 public class DWGraph_DS implements directed_weighted_graph {
 
@@ -140,12 +141,15 @@ class NodeData implements node_data {
     private double weight;
     private String info; //represents if we visited the node in algorithms (WHITE = Not visited, BLACK= = visited)
     private int tag; //represents parent key in algorithms
+    private Location location;
+
 
     public NodeData(NodeData node) { // Constructor for the DeepCopy
         this.key = node.key;
         this.info = node.info;
         this.tag = node.tag;
         this.weight = node.weight;
+        this.location = node.location;
 
         this.neighborEdges = new HashMap<Integer, edge_data>();
         for (edge_data edge : node.neighborEdges.values()) {
@@ -165,6 +169,7 @@ class NodeData implements node_data {
         this.weight = Double.MAX_VALUE;
         this.info = "WHITE";
         this.tag = -1;
+        this.location = new Location(0,0,0);
     }
 
     public void connectEdge(NodeData destNode, double w) {
@@ -180,14 +185,14 @@ class NodeData implements node_data {
 
     @Override
     public geo_location getLocation() {
-        // TODO Auto-generated method stub
-        return null;
+        return location;
     }
 
     @Override
     public void setLocation(geo_location p) {
-        // TODO Auto-generated method stub
-
+        this.location.setX(p.x());
+        this.location.setY(p.y());
+        this.location.setZ(p.z());
     }
 
     @Override
@@ -352,5 +357,54 @@ class EdgeData implements edge_data, Comparable<edge_data> {
     @Override
     public int compareTo(edge_data o) {
         return this.weight < o.getWeight() ? -1 : this.weight > o.getWeight() ? 1 : 0;
+    }
+}
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+class Location implements geo_location {
+
+    private double x;
+    private double y;
+    private double z;
+
+    public Location(double x, double y, double z) {
+        this.x=x;
+        this.y=y;
+        this.z=z;
+    }
+
+    @Override
+    public double x() {
+        return x;
+    }
+
+    @Override
+    public double y() {
+        return y;
+    }
+
+    @Override
+    public double z() {
+        return z;
+    }
+
+    public void setX (double x){
+        this.x=x;
+    }
+    public void setY (double y){
+        this.x=x;
+    }
+    public void setZ (double z){
+        this.x=x;
+    }
+
+    @Override
+    public double distance(geo_location g) {
+        return 0;
+    }
+
+    public String toString() {
+        return "" + x + "," + y + "," + z;
     }
 }

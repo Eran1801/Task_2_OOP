@@ -218,16 +218,20 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
         try {
             FileReader reader = new FileReader(file);
+
+            // JsonParser convert the reader to a JsonObject
             JsonElement jsonElement = JsonParser.parseReader(reader).getAsJsonObject();
             JsonObject jsonObject = jsonElement.getAsJsonObject();
 
             DWGraph_DS loadedGraphFromJson = new DWGraph_DS();
 
+            // convert the nodes&edges in the Json file to an Array var
             JsonArray nodesJsonArray = jsonObject.getAsJsonArray("Nodes");
-            JsonArray edgesJsonarray = jsonObject.getAsJsonArray("Edges");
+            JsonArray edgesJsonArray = jsonObject.getAsJsonArray("Edges");
 
             // for the nodes
             for (int i = 0; i < nodesJsonArray.size(); i++) {
+                // nodeJsonObject holds the nodesArray in 'i' index
                 JsonObject nodeJsonObject = nodesJsonArray.get(i).getAsJsonObject();
                 String pos = nodeJsonObject.get("pos").getAsString();
                 int key = nodeJsonObject.get("id").getAsInt();
@@ -243,8 +247,8 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             }
 
             // for the edges
-            for (int i = 0; i < edgesJsonarray.size(); i++) {
-                JsonObject edgeJsonObject = edgesJsonarray.get(i).getAsJsonObject();
+            for (int i = 0; i < edgesJsonArray.size(); i++) {
+                JsonObject edgeJsonObject = edgesJsonArray.get(i).getAsJsonObject();
                 int srcJson = edgeJsonObject.get("src").getAsInt();
                 int destJson = edgeJsonObject.get("dest").getAsInt();
                 double weightJson = edgeJsonObject.get("w").getAsDouble();

@@ -5,6 +5,7 @@ package gameClient.util;
 
 import api.geo_location;
 
+import java.awt.*;
 import java.io.Serializable;
 
 public class Point3D implements geo_location, Serializable{
@@ -54,6 +55,13 @@ public class Point3D implements geo_location, Serializable{
         double dz = this.z() - p2.z();
         double t = (dx*dx+dy*dy+dz*dz);
         return Math.sqrt(t);
+    }
+
+    public Point3D getMiddlePoint(geo_location p2) {
+        double midX = (this.x()+p2.x()) / 2;
+        double midY = (this.y()+p2.y()) / 2;
+        double midZ = (this.z()+p2.z()) / 2;
+        return new Point3D(midX, midY, midZ);
     }
 
     public boolean equals(Object p) {

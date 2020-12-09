@@ -7,6 +7,7 @@ import api.game_service;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -22,7 +23,7 @@ public class Ex2_Client implements Runnable{
 	
 	@Override
 	public void run() {
-		int scenario_num = 11;
+		int scenario_num = 7;
 		game_service game = Game_Server_Ex2.getServer(scenario_num); // you have [0,23] games
 	//	int id = 999;
 	//	game.login(id);
@@ -108,9 +109,10 @@ public class Ex2_Client implements Runnable{
 		_win = new MyFrame("test Ex2");
 		_win.setSize(1000, 700);
 		_win.update(_ar);
-
 	
-		_win.show();
+		//_win.show();
+		_win.setVisible(true);
+		_win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		String info = game.toString();
 		JSONObject line;
 		try {

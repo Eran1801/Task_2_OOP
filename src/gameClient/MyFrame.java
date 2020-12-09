@@ -10,6 +10,7 @@ import gameClient.util.Range2D;
 
 import javax.swing.*;
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,6 +25,8 @@ public class MyFrame extends JFrame{
 	private int _ind;
 	private Arena _ar;
 	private gameClient.util.Range2Range _w2f;
+
+
 	MyFrame(String a) {
 		super(a);
 		int _ind = 0;
@@ -75,7 +78,7 @@ public class MyFrame extends JFrame{
 		}
 	}
 	private void drawPokemons(Graphics g) {
-		List<CL_Pokemon> fs = _ar.getPokemons();
+		List<CL_Pokemon> fs = _ar.getPokemons(); // the Pokemon's are in the arena
 		if(fs!=null) {
 		Iterator<CL_Pokemon> itr = fs.iterator();
 		
@@ -87,7 +90,6 @@ public class MyFrame extends JFrame{
 			g.setColor(Color.green);
 			if(f.getType()<0) {g.setColor(Color.orange);}
 			if(c!=null) {
-
 				geo_location fp = this._w2f.world2frame(c);
 				g.fillOval((int)fp.x()-r, (int)fp.y()-r, 2*r, 2*r);
 			//	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
@@ -99,21 +101,20 @@ public class MyFrame extends JFrame{
 	private void drawAgants(Graphics g) {
 		List<CL_Agent> rs = _ar.getAgents();
 	//	Iterator<OOP_Point3D> itr = rs.iterator();
-		g.setColor(Color.red);
-		int i=0;
+		g.setColor(Color.red);// the color of the agents
+		int i=0; // runs on the agent amount
 		while(rs!=null && i<rs.size()) {
-			geo_location c = rs.get(i).getLocation();
+			geo_location c = rs.get(i).getLocation(); // getting the agent in location 'i'
 			int r=8;
 			i++;
 			if(c!=null) {
-
 				geo_location fp = this._w2f.world2frame(c);
 				g.fillOval((int)fp.x()-r, (int)fp.y()-r, 2*r, 2*r);
 			}
 		}
 	}
 	private void drawNode(node_data n, int r, Graphics g) {
-		geo_location pos = n.getLocation();
+		geo_location pos = n.getLocation(); // the position of the node
 		geo_location fp = this._w2f.world2frame(pos);
 		g.fillOval((int)fp.x()-r, (int)fp.y()-r, 2*r, 2*r);
 		g.drawString(""+n.getKey(), (int)fp.x(), (int)fp.y()-4*r);
@@ -125,6 +126,11 @@ public class MyFrame extends JFrame{
 		geo_location s0 = this._w2f.world2frame(s);
 		geo_location d0 = this._w2f.world2frame(d);
 		g.drawLine((int)s0.x(), (int)s0.y(), (int)d0.x(), (int)d0.y());
+		int type = e.getSrc() > e.getDest() ? 1 : -1;
+		Point3D middlePoint = ((Point3D)(s0)).getMiddlePoint(d0);
+		double eWeight = e.getWeight();
+		eWeight = Double.parseDouble(new DecimalFormat("##.##").format(eWeight));
+		g.drawString( "" + eWeight,(int)middlePoint.x(), type > 0 ? (int)middlePoint.y() + 20 : (int)middlePoint.y() - 20);
 	//	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
 	}
 }

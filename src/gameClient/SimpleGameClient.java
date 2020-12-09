@@ -20,7 +20,7 @@ public class SimpleGameClient {
 		test1();
 	}
 	public static void test1() {
-		int level_number = 3;
+		int level_number = 7;
 		game_service game = Game_Server_Ex2.getServer(level_number); // you have [0,23] games
 		String g = game.getGraph();
 		directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();

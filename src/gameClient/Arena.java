@@ -112,9 +112,12 @@ public class Arena {
 		catch (JSONException e) {e.printStackTrace();}
 		return ans;
 	}
+
+	//finds in which edge the pokemon exists and sets the pokemon's edge
 	public static void updateEdge(CL_Pokemon fr, directed_weighted_graph g) {
 		//	oop_edge_data ans = null;
 		Iterator<node_data> itr = g.getV().iterator();
+		// going through all the nodes, and on in each node checking if the Pokemon is on his edges
 		while(itr.hasNext()) {
 			node_data v = itr.next();
 			Iterator<edge_data> iter = g.getE(v.getKey()).iterator();

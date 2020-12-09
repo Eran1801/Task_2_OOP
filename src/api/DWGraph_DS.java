@@ -157,7 +157,7 @@ class NodeData implements node_data {
 
         this.edgesConnectedToThisNode = new HashMap<Integer, edge_data>();
         for (edge_data edge : node.edgesConnectedToThisNode.values()) {
-            this.edgesConnectedToThisNode.put(edge.getSrc(), new EdgeData((EdgeData)edge));
+            this.edgesConnectedToThisNode.put(edge.getSrc(), new EdgeData((EdgeData) edge));
         }
     }
 
@@ -168,7 +168,7 @@ class NodeData implements node_data {
         this.weight = Double.MAX_VALUE;
         this.info = "WHITE";
         this.tag = -1;
-        this.location = new Location(0,0,0);
+        this.location = new Location(0, 0, 0);
     }
 
     public void connectEdge(NodeData destNode, double w) {
@@ -249,7 +249,7 @@ class NodeData implements node_data {
 
     @Override
     public boolean equals(Object o) {
-        NodeData compareToNode = (NodeData)o; //cast to NodeData
+        NodeData compareToNode = (NodeData) o; //cast to NodeData
 
         //Compare keys (There is no need to compare other primitives that used for algorithms, because there is no need for them to be equal)
         if (this.getKey() != compareToNode.getKey())
@@ -261,10 +261,10 @@ class NodeData implements node_data {
         //loop through all neighborEdges in the original node and compare them to the other node neighborEdges (using keys to get the edge data)
         //(There is no need to compare other variables that used for algorithms, because there is no need for them to be equal)
         for (int edgeKey : this.neighborEdges.keySet()) {
-            EdgeData originalEdge = (EdgeData)this.neighborEdges.get(edgeKey);
-            EdgeData compareToEdge = (EdgeData)compareToNode.neighborEdges.get(edgeKey);
+            EdgeData originalEdge = (EdgeData) this.neighborEdges.get(edgeKey);
+            EdgeData compareToEdge = (EdgeData) compareToNode.neighborEdges.get(edgeKey);
             if (originalEdge.getSrc() != compareToEdge.getSrc() || originalEdge.getDest() != compareToEdge.getDest()
-            || originalEdge.getWeight() != compareToEdge.getWeight())
+                    || originalEdge.getWeight() != compareToEdge.getWeight())
                 return false;
         }
 
@@ -274,8 +274,8 @@ class NodeData implements node_data {
         //loop through all edgesConnectedToThisNode in the original node and compare them to the other node edgesConnectedToThisNode (using keys to get the edge data)
         //(There is no need to compare other variables that used for algorithms, because there is no need for them to be equal)
         for (int edgeKey : this.edgesConnectedToThisNode.keySet()) {
-            EdgeData originalEdge = (EdgeData)this.edgesConnectedToThisNode.get(edgeKey);
-            EdgeData compareToEdge = (EdgeData)compareToNode.edgesConnectedToThisNode.get(edgeKey);
+            EdgeData originalEdge = (EdgeData) this.edgesConnectedToThisNode.get(edgeKey);
+            EdgeData compareToEdge = (EdgeData) compareToNode.edgesConnectedToThisNode.get(edgeKey);
             if (originalEdge.getSrc() != compareToEdge.getSrc() || originalEdge.getDest() != compareToEdge.getDest()
                     || originalEdge.getWeight() != compareToEdge.getWeight())
                 return false;
@@ -368,9 +368,9 @@ class Location implements geo_location {
     private double z;
 
     public Location(double x, double y, double z) {
-        this.x=x;
-        this.y=y;
-        this.z=z;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     @Override
@@ -388,19 +388,21 @@ class Location implements geo_location {
         return z;
     }
 
-    public void setX (double x){
-        this.x=x;
+    public void setX(double x) {
+        this.x = x;
     }
-    public void setY (double y){
-        this.x=x;
+
+    public void setY(double y) {
+        this.y = y;
     }
-    public void setZ (double z){
-        this.x=x;
+
+    public void setZ(double z) {
+        this.z = z;
     }
 
     @Override
     public double distance(geo_location g) {
-        return 0;
+        return Math.sqrt(Math.pow(this.x - g.x(), 2) + Math.pow(this.y - g.y(), 2));
     }
 
     public String toString() {

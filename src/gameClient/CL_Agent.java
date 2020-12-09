@@ -23,7 +23,6 @@ public class CL_Agent {
 		
 		private double _value;
 		
-		
 		public CL_Agent(directed_weighted_graph g, int start_node) {
 			_gg = g;
 			setMoney(0);

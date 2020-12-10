@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -20,6 +21,7 @@ public class Ex2 {
     private static MyFrame _win;
     private static Arena _ar;
     private static game_service game;
+    private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     public static void main(String[] args) {
 
@@ -99,7 +101,8 @@ public class Ex2 {
 
         // Taking care of the frame
         _win = new MyFrame("Pokemon Game");
-        _win.setSize(1000, 700);
+        _win.setSize((int)screenSize.getWidth(), (int)screenSize.getHeight());
+        _win.setResizable(true); // suppose to work but doesn't
         _win.update(_ar);
 
         _win.setVisible(true);
@@ -114,22 +117,22 @@ public class Ex2 {
             System.out.println(info);
             System.out.println(game.getPokemons());
             int src_node = 0;  // arbitrary node, you should start at one of the pokemon
-            ArrayList<CL_Pokemon> cl_fs = Arena.json2Pokemons(game.getPokemons());
+            ArrayList<CL_Pokemon> cl_ps = Arena.json2Pokemons(game.getPokemons());
 
             // This loop going through all the Pokemon's in the game and set on which edge they present
-            for (int a = 0; a < cl_fs.size(); a++) {
-                Arena.updateEdge(cl_fs.get(a), dwgAlgo.getGraph());
+            for (int a = 0; a < cl_ps.size(); a++) {
+                Arena.updateEdge(cl_ps.get(a), dwgAlgo.getGraph());
             }
             // This loop going through all the Agent's in the game and set on which edge they present
             for (int a = 0; a < rs; a++) {
-                int ind = a % cl_fs.size();
-                CL_Pokemon c = cl_fs.get(ind);
-                int nn = c.get_edge().getDest(); //the key of the dest node of the edge that the pokemon is present on
+                int ind = a % cl_ps.size();
+                CL_Pokemon c = cl_ps.get(ind);
+                int key_edge = c.get_edge().getDest(); //the key of the dest node of the edge that the pokemon is present on
                 if (c.getType() < 0) {
-                    nn = c.get_edge().getSrc();  //the key of the src node of the edge that the pokemon is present on
+                    key_edge = c.get_edge().getSrc();  //the key of the src node of the edge that the pokemon is present on
                 }
 
-                game.addAgent(nn);
+                game.addAgent(key_edge);
             }
         } catch (JSONException e) {
             e.printStackTrace();

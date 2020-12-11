@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -98,7 +99,7 @@ public class Ex2_Client implements Runnable{
 		ans = itr.next().getDest();
 		return ans;
 	}
-	private void init(game_service game) {
+	private void init(game_service game)  {
 		String g = game.getGraph();
 		String fs = game.getPokemons();
 		directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();

@@ -12,15 +12,13 @@ public class CL_Agent {
 		private static int _count = 0;
 		private static int _seed = 3331;
 		private int _id;
-	//	private long _key;
 		private geo_location _pos;
 		private double _speed;
 		private edge_data _curr_edge;
 		private node_data _curr_node;
 		private directed_weighted_graph _gg;
-		private CL_Pokemon _curr_fruit;
+		private CL_Pokemon _curr_pokemon;
 		private long _sg_dt;
-		
 		private double _value;
 		
 		public CL_Agent(directed_weighted_graph g, int start_node) {
@@ -132,11 +130,11 @@ public class CL_Agent {
 		public void setSpeed(double v) {
 			this._speed = v;
 		}
-		public CL_Pokemon get_curr_fruit() {
-			return _curr_fruit;
+		public CL_Pokemon get_curr_pokemon() {
+			return _curr_pokemon;
 		}
-		public void set_curr_fruit(CL_Pokemon curr_fruit) {
-			this._curr_fruit = curr_fruit;
+		public void set_curr_pokemon(CL_Pokemon curr_pokemon) {
+			this._curr_pokemon = curr_pokemon;
 		}
 		public void set_SDT(long ddtt) {
 			long ddt = ddtt;
@@ -146,8 +144,8 @@ public class CL_Agent {
 				geo_location src = _gg.getNode(get_curr_edge().getSrc()).getLocation();
 				double de = src.distance(dest);
 				double dist = _pos.distance(dest);
-				if(this.get_curr_fruit().get_edge()==this.get_curr_edge()) {
-					 dist = _curr_fruit.getLocation().distance(this._pos);
+				if(this.get_curr_pokemon().get_edge()==this.get_curr_edge()) {
+					 dist = _curr_pokemon.getLocation().distance(this._pos);
 				}
 				double norm = dist/de;
 				double dt = w*norm / this.getSpeed(); 

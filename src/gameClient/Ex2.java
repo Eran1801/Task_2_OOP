@@ -34,13 +34,12 @@ public class Ex2 {
         //game.move();
         //System.out.println(game.getAgents());
 
-        while(game.isRunning()) {
+        while (game.isRunning()) {
             updateGameBoard();
             try {
                 _win.repaint();
                 Thread.sleep(1000);
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -56,21 +55,21 @@ public class Ex2 {
         String getAgentsJson = game.getAgents();
         List<CL_Agent> agents = Arena.getAgents(getAgentsJson, _ar.getGraph());
         _ar.setAgents(agents);
-        String getPokemonsJson =  game.getPokemons();
+        String getPokemonsJson = game.getPokemons();
         List<CL_Pokemon> pokemons = Arena.json2Pokemons(getPokemonsJson);
         _ar.setPokemons(pokemons);
         boolean needToMove = false;
-        for(int i=0;i<agents.size();i++) {
+        for (int i = 0; i < agents.size(); i++) {
             CL_Agent agent = agents.get(i);
             int id = agent.getID();
             int dest = agent.getNextNode();
             int src = agent.getSrcNode();
             double v = agent.getValue();
-            if(dest==-1) { //TODO: we stopped here, dest is always != -1 for some reason. need to check why!
+            if (dest == -1) { //TODO: we stopped here, dest is always != -1 for some reason. need to check why!
                 needToMove = true;
                 dest = 13; //TODO: calculate what the next dest should be
                 game.chooseNextEdge(agent.getID(), dest);
-                System.out.println("Agent: "+id+", val: "+v+"   turned to node: "+dest);
+                System.out.println("Agent: " + id + ", val: " + v + "   turned to node: " + dest);
             }
         }
         if (needToMove) game.move();
@@ -78,8 +77,8 @@ public class Ex2 {
 
     private static void init(game_service game) {
         String g = game.getGraph();
-        String fs = game.getPokemons();
-        directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used();
+        String ps = game.getPokemons();
+        directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used(); // needs to delete ?
         DWGraph_DS dwg = new DWGraph_DS();
         DWGraph_Algo dwgAlgo = new DWGraph_Algo();
         dwgAlgo.init(dwg);
@@ -97,35 +96,37 @@ public class Ex2 {
         // Taking care of the arena
         _ar = new Arena();
         _ar.setGraph(dwgAlgo.getGraph());
-        _ar.setPokemons(Arena.json2Pokemons(fs));
+        _ar.setPokemons(Arena.json2Pokemons(ps));
 
         // Taking care of the frame
         _win = new MyFrame("Pokemon Game");
-        _win.setSize((int)screenSize.getWidth(), (int)screenSize.getHeight());
+        ImageIcon iconGraph = new ImageIcon("src/gameClient/pic/Graph.png");
+        _win.setIconImage(iconGraph.getImage());
+        _win.setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
         _win.setResizable(true); // suppose to work but doesn't
         _win.update(_ar);
 
         _win.setVisible(true);
         _win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        String info = game.toString(); // returns all the data on the game level
+        String infoGameString = game.toString(); // returns all the data on the game level
         JSONObject line;
         try {
-            line = new JSONObject(info);// line holds the data on the game level as jsonObject
+            line = new JSONObject(infoGameString);// line holds the data on the game level as jsonObject
             JSONObject ttt = line.getJSONObject("GameServer");
-            int rs = ttt.getInt("agents"); // how much agents there is in this level
-            System.out.println(info);
+            int amountAgents = ttt.getInt("agents"); // how much agents there is in this level
+            System.out.println(infoGameString);
             System.out.println(game.getPokemons());
             int src_node = 0;  // arbitrary node, you should start at one of the pokemon
             ArrayList<CL_Pokemon> cl_ps = Arena.json2Pokemons(game.getPokemons());
 
             // This loop going through all the Pokemon's in the game and set on which edge they present
-            for (int a = 0; a < cl_ps.size(); a++) {
-                Arena.updateEdge(cl_ps.get(a), dwgAlgo.getGraph());
+            for (int i = 0; i < cl_ps.size(); i++) {
+                Arena.updateEdge(cl_ps.get(i), dwgAlgo.getGraph());
             }
             // This loop going through all the Agent's in the game and set on which edge they present
-            for (int a = 0; a < rs; a++) {
-                int ind = a % cl_ps.size();
+            for (int i = 0; i < amountAgents; i++) {
+                int ind = i % cl_ps.size();
                 CL_Pokemon c = cl_ps.get(ind);
                 int key_edge = c.get_edge().getDest(); //the key of the dest node of the edge that the pokemon is present on
                 if (c.getType() < 0) {

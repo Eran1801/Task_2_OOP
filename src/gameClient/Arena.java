@@ -105,8 +105,8 @@ public class Arena {
 				double v = pk.getDouble("value");
 				//double s = 0;//pk.getDouble("speed");
 				String p = pk.getString("pos");
-				CL_Pokemon f = new CL_Pokemon(new Point3D(p), t, v, 0, null);
-				ans.add(f);
+				CL_Pokemon pok = new CL_Pokemon(new Point3D(p), t, v, 0, null);
+				ans.add(pok);
 			}
 		}
 		catch (JSONException e) {e.printStackTrace();}
@@ -114,7 +114,7 @@ public class Arena {
 	}
 
 	//finds in which edge the pokemon exists and sets the pokemon's edge
-	public static void updateEdge(CL_Pokemon fr, directed_weighted_graph g) {
+	public static void updateEdge(CL_Pokemon ps, directed_weighted_graph g) {
 		//	oop_edge_data ans = null;
 		Iterator<node_data> itr = g.getV().iterator();
 		// going through all the nodes, and on in each node checking if the Pokemon is on his edges
@@ -123,8 +123,8 @@ public class Arena {
 			Iterator<edge_data> iter = g.getE(v.getKey()).iterator();
 			while(iter.hasNext()) {
 				edge_data e = iter.next();
-				boolean f = isOnEdge(fr.getLocation(), e,fr.getType(), g);
-				if(f) {fr.set_edge(e);}
+				boolean f = isOnEdge(ps.getLocation(), e,ps.getType(), g);
+				if(f) {ps.set_edge(e);}
 			}
 		}
 	}

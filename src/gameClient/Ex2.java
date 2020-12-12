@@ -25,6 +25,14 @@ public class Ex2 {
 
     public static void main(String[] args) {
 
+        LoginGui start = new LoginGui();
+        start.GUI();
+
+        // THE IDEA :
+        // To set a Thread that will wait to a call from the LoginGui when the "start game" button will press
+        // and then will enter all of this ( start game and .. .. )
+        // because first of all, the LOGIN needs to appear when the Ex2 main runs
+        // and after pressing the start game button then the graph GUI needs to start.
         int level_number = 7;
         game = Game_Server_Ex2.getServer(level_number); // you have [0,23] games
 

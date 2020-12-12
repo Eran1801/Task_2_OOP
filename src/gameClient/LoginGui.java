@@ -15,7 +15,7 @@ public class LoginGui implements ActionListener {
     private static JTextField levelNumberText;
     private static JButton buttonLogin;
 
-    public static void main(String[] args) {
+    public void GUI() {
 
         // The frame of your GUI
         JFrame frame = new JFrame("Login Game");
@@ -75,12 +75,11 @@ public class LoginGui implements ActionListener {
 
         buttonLogin = new JButton("START GAME");
         buttonLogin.setBounds(10, 90, 110, 25);
-        buttonLogin.addActionListener(new LoginGui()); // To use the actionListener you need to implement the
+        buttonLogin.addActionListener(new LoginGui()); // To use the actionListener you need to implement the actionPerformed function
         panel.add(buttonLogin);
         frame.setLocationRelativeTo(null); // make thr GUI shows in the middle
         ImageIcon icon = new ImageIcon("src/gameClient/pic/pikachu.png");
         frame.setIconImage(icon.getImage());
-
 
 
         //The setVisible(true) method makes the frame appear on the screen. If you forget to do this,
@@ -94,5 +93,6 @@ public class LoginGui implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         // TODO : to set a listener to the button start game to the graph
+
     }
 }

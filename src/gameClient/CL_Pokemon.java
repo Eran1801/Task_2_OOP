@@ -11,11 +11,10 @@ public class CL_Pokemon {
 	private double min_dist;
 	private int min_ro;
 	
-	public CL_Pokemon(Point3D p, int t, double v, double s, edge_data e) {
+	public CL_Pokemon(Point3D p, int t, double v, edge_data e) {
 		_type = t;
-	//	_speed = s;
 		_value = v;
-		set_edge(e);
+		this._edge = e;
 		_pos = p;
 		min_dist = -1;
 		min_ro = -1;
@@ -37,7 +36,7 @@ public class CL_Pokemon {
 		return _edge;
 	}
 
-	public void set_edge(edge_data _edge) {
+	public void  set_edge(edge_data _edge) {
 		this._edge = _edge;
 	}
 
@@ -62,5 +61,9 @@ public class CL_Pokemon {
 
 	public void setMin_ro(int min_ro) {
 		this.min_ro = min_ro;
+	}
+
+	public boolean sameValueAs(CL_Pokemon other) {
+		return this._value == other._value;
 	}
 }

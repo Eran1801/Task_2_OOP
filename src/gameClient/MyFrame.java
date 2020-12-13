@@ -59,11 +59,17 @@ public class MyFrame extends JFrame {
         int h = this.getHeight();
         g.clearRect(0, 0, w, h);
         //	updateFrame();
-        drawPokemons(g);
-        drawGraph(g);
-        drawAgants(g);
-        drawInfo(g);
 
+        Image tempPaintingImage;
+        Graphics tempPaintingGraphics;
+        tempPaintingImage = createImage(w, h);
+        tempPaintingGraphics = tempPaintingImage.getGraphics();
+        tempPaintingGraphics.clearRect(0, 0, w, h);
+        drawGraph(tempPaintingGraphics);
+        drawPokemons(tempPaintingGraphics);
+        drawAgants(tempPaintingGraphics);
+        drawInfo(tempPaintingGraphics);
+        g.drawImage(tempPaintingImage, 0, 0, this);
     }
 
     private void drawInfo(Graphics g) {

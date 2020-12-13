@@ -15,7 +15,11 @@ public class LoginGui implements ActionListener {
     private static JTextField levelNumberText;
     private static JButton buttonLogin;
 
-    public void GUI() {
+    public static void main(String[] args) {
+        GUI();
+    }
+
+    public static void GUI() {
 
         // The frame of your GUI
         JFrame frame = new JFrame("Login Game");

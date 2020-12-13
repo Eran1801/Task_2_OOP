@@ -1,10 +1,7 @@
 package gameClient;
 
 import Server.Game_Server_Ex2;
-import api.DWGraph_Algo;
-import api.DWGraph_DS;
-import api.directed_weighted_graph;
-import api.game_service;
+import api.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,68 +22,90 @@ public class Ex2 {
 
     public static void main(String[] args) {
 
-        LoginGui start = new LoginGui();
-        start.GUI();
+//        LoginGui start = new LoginGui();
+//        start.GUI();
 
         // THE IDEA :
         // To set a Thread that will wait to a call from the LoginGui when the "start game" button will press
         // and then will enter all of this ( start game and .. .. )
         // because first of all, the LOGIN needs to appear when the Ex2 main runs
         // and after pressing the start game button then the graph GUI needs to start.
+
         int level_number = 7;
         game = Game_Server_Ex2.getServer(level_number); // you have [0,23] games
 
         init(game);
         game.startGame();
+        System.out.println(game.getAgents());
+        //CL_Agent agent = _ar.getAgents().get(0);
+        //game.chooseNextEdge(agent.getID(), 13);
         //game.chooseNextEdge(0, 13);
-        //game.move();
-        //System.out.println(game.getAgents());
 
         while (game.isRunning()) {
             updateGameBoard();
+            game.move();
+            System.out.println(game.getAgents());
             try {
                 _win.repaint();
-                Thread.sleep(1000);
+                Thread.sleep(75);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        String res = game.toString();
 
-        System.out.println(res);
+
         System.exit(0);
 
     }
 
     private static void updateGameBoard() {
-
         String getAgentsJson = game.getAgents();
         List<CL_Agent> agents = Arena.getAgents(getAgentsJson, _ar.getGraph());
-        _ar.setAgents(agents);
-        String getPokemonsJson = game.getPokemons();
-        List<CL_Pokemon> pokemons = Arena.json2Pokemons(getPokemonsJson);
-        _ar.setPokemons(pokemons);
-        boolean needToMove = false;
-        for (int i = 0; i < agents.size(); i++) {
-            CL_Agent agent = agents.get(i);
-            int id = agent.getID();
-            int dest = agent.getNextNode();
-            int src = agent.getSrcNode();
-            double v = agent.getValue();
-            if (dest == -1) { //TODO: we stopped here, dest is always != -1 for some reason. need to check why!
-                needToMove = true;
-                dest = 13; //TODO: calculate what the next dest should be
-                game.chooseNextEdge(agent.getID(), dest);
-                System.out.println("Agent: " + id + ", val: " + v + "   turned to node: " + dest);
+        _ar.setAgents(agents); //update agents in the arena for the GUI
+
+        //we want to perform an algorithm only after catching a Pokemon
+        //if (_ar.isPokemonCaught()) {
+
+            String getPokemonsJson = game.getPokemons();
+            List<CL_Pokemon> pokemons = Arena.json2Pokemons(getPokemonsJson);
+            _ar.setPokemons(pokemons); //update pokemon's in the arena for the GUI
+
+            // This loop going through all the Pokemon's in the game and set on which edge they present
+            for (int i = 0; i < pokemons.size(); i++) {
+                Arena.updateEdge(pokemons.get(i), _ar.getGraph());
             }
-        }
-        if (needToMove) game.move();
+
+            System.out.println(game.getPokemons());
+
+            CL_Pokemon rarestPokemon = _ar.getRarestPokemon();
+
+            //there is no rare pokemon
+            if (rarestPokemon == null) {
+                System.out.println("No rare pokemon found.");
+                //loop through all Pokemon's
+                for (int i=0; i< pokemons.size(); i++) {
+                    CL_Pokemon currPokemon = pokemons.get(i);
+                }
+            }
+
+            //there is a rare pokemon
+            else {
+                System.out.println("Found rare pokemon! value: " + rarestPokemon.getValue());
+                System.out.println(game.toString());
+                CL_Agent nearestAgent = _ar.searchForNearestAgent(rarestPokemon);
+                nearestAgent.removeFirstNode();
+                game.chooseNextEdge(nearestAgent.getID(), nearestAgent.move());
+
+            }
+        //}
+        game.move();
+        System.out.println(game.getAgents());
     }
 
     private static void init(game_service game) {
         String g = game.getGraph();
         String ps = game.getPokemons();
-        directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used(); // needs to delete ?
+        //directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used(); // needs to delete ?
         DWGraph_DS dwg = new DWGraph_DS();
         DWGraph_Algo dwgAlgo = new DWGraph_Algo();
         dwgAlgo.init(dwg);
@@ -101,12 +120,13 @@ public class Ex2 {
         }
 
         dwgAlgo.load("graph.json");
-        // Taking care of the arena
+        // initiating Arena
         _ar = new Arena();
         _ar.setGraph(dwgAlgo.getGraph());
         _ar.setPokemons(Arena.json2Pokemons(ps));
+        _ar.setGraphAlgo(dwgAlgo);
 
-        // Taking care of the frame
+        // Initiating Frame
         _win = new MyFrame("Pokemon Game");
         ImageIcon iconGraph = new ImageIcon("src/gameClient/pic/Graph.png");
         _win.setIconImage(iconGraph.getImage());
@@ -126,7 +146,7 @@ public class Ex2 {
             System.out.println(infoGameString);
             System.out.println(game.getPokemons());
             int src_node = 0;  // arbitrary node, you should start at one of the pokemon
-            ArrayList<CL_Pokemon> cl_ps = Arena.json2Pokemons(game.getPokemons());
+            List<CL_Pokemon> cl_ps = _ar.getPokemons();
 
             // This loop going through all the Pokemon's in the game and set on which edge they present
             for (int i = 0; i < cl_ps.size(); i++) {
@@ -141,11 +161,19 @@ public class Ex2 {
                     key_edge = c.get_edge().getSrc();  //the key of the src node of the edge that the pokemon is present on
                 }
 
-                game.addAgent(key_edge);
+                //game.addAgent(key_edge);
+                game.addAgent(0);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        initAgents();
+    }
+    private static void initAgents() {
+        String getAgentsJson = game.getAgents();
+        List<CL_Agent> agents = Arena.getAgents(getAgentsJson, _ar.getGraph());
+        _ar.setAgents(agents); //update agents in the arena for the GUI
+        _ar.initAgentsValues(_ar.getAgents().size());
     }
 
 }

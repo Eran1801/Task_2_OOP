@@ -289,7 +289,7 @@ public class Arena {
         List<node_data> path = new ArrayList<>();
         CL_Agent nearestAgent = null;
         for (CL_Agent agent : this.getAgents()) {
-            path = this._ggAlgo.shortestPath(agent.getSrcNode(), rarestPokemonEdgeType > 0 ? rarestPokemonEdge.getSrc() : rarestPokemonEdge.getDest());
+            path = this._ggAlgo.shortestPath(agent.get_curr_edge().getDest(), rarestPokemonEdgeType > 0 ? rarestPokemonEdge.getDest() : rarestPokemonEdge.getSrc());
             double distance = path.get(path.size() - 1).getWeight();
             if (distance < minDistance) {
                 minDistance = distance;
@@ -297,7 +297,7 @@ public class Arena {
             }
         }
 
-        node_data lastNode = this._gg.getNode(rarestPokemonEdgeType > 0 ? rarestPokemonEdge.getDest() : rarestPokemonEdge.getSrc());
+        node_data lastNode = this._gg.getNode(rarestPokemonEdge.getDest());
         path.add(lastNode);
         nearestAgent.setPath(path);
 

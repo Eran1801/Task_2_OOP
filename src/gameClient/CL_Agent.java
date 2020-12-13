@@ -175,13 +175,11 @@ public class CL_Agent {
 	}
 
 	public int move() {
-		int key=-1;
-		//if(this.path.size() >= 1)
-			key = this.path.remove(0).getKey();
+		int key = this.path.remove(0).getKey();
 		return key;
 	}
 
-	public void removeFirstNode() {
-		this.path.remove(0);
+	public int removeFirstNode() {
+		return this.path.remove(0).getKey();
 	}
 }

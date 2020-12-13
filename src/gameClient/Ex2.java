@@ -21,7 +21,6 @@ public class Ex2 {
     private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
     public static void main(String[] args) {
-
 //        LoginGui start = new LoginGui();
 //        start.GUI();
 
@@ -34,9 +33,12 @@ public class Ex2 {
         int level_number = 7;
         game = Game_Server_Ex2.getServer(level_number); // you have [0,23] games
 
-        init(game);
+        init();
         game.startGame();
+        System.out.println("game.toString()=" + game.toString());
         System.out.println(game.getAgents());
+        game.chooseNextEdge(0, 6);
+
         //CL_Agent agent = _ar.getAgents().get(0);
         //game.chooseNextEdge(agent.getID(), 13);
         //game.chooseNextEdge(0, 13);
@@ -44,7 +46,6 @@ public class Ex2 {
         while (game.isRunning()) {
             updateGameBoard();
             game.move();
-            System.out.println(game.getAgents());
             try {
                 _win.repaint();
                 Thread.sleep(75);
@@ -64,8 +65,8 @@ public class Ex2 {
         _ar.setAgents(agents); //update agents in the arena for the GUI
 
         //we want to perform an algorithm only after catching a Pokemon
-        //if (_ar.isPokemonCaught()) {
-
+        if (_ar.isPokemonCaught() ) {
+            System.out.println("Entered isCaught");
             String getPokemonsJson = game.getPokemons();
             List<CL_Pokemon> pokemons = Arena.json2Pokemons(getPokemonsJson);
             _ar.setPokemons(pokemons); //update pokemon's in the arena for the GUI
@@ -93,16 +94,16 @@ public class Ex2 {
                 System.out.println("Found rare pokemon! value: " + rarestPokemon.getValue());
                 System.out.println(game.toString());
                 CL_Agent nearestAgent = _ar.searchForNearestAgent(rarestPokemon);
-                nearestAgent.removeFirstNode();
+                System.out.println("Test1: " + nearestAgent.removeFirstNode());
                 game.chooseNextEdge(nearestAgent.getID(), nearestAgent.move());
 
             }
-        //}
+        }
         game.move();
         System.out.println(game.getAgents());
     }
 
-    private static void init(game_service game) {
+    private static void init() {
         String g = game.getGraph();
         String ps = game.getPokemons();
         //directed_weighted_graph gg = game.getJava_Graph_Not_to_be_used(); // needs to delete ?
@@ -162,7 +163,7 @@ public class Ex2 {
                 }
 
                 //game.addAgent(key_edge);
-                game.addAgent(0);
+                game.addAgent(7);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -175,5 +176,4 @@ public class Ex2 {
         _ar.setAgents(agents); //update agents in the arena for the GUI
         _ar.initAgentsValues(_ar.getAgents().size());
     }
-
 }

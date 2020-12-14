@@ -15,6 +15,8 @@ public class LoginGui implements ActionListener {
     private static JTextField levelNumberText;
     private static JButton buttonLogin;
 
+
+
     public static void main(String[] args) {
         GUI();
     }
@@ -65,20 +67,14 @@ public class LoginGui implements ActionListener {
         userIdText.setBounds(120, 20, 165, 25);
         panel.add(userIdText);
 
-        levelNumberText = new JTextField(9);
-        levelNumberText.addKeyListener(new KeyAdapter() { // limits the level number number up to 2
-            @Override
-            public void keyTyped(KeyEvent e) {
-                if (levelNumberText.getText().length() >= 2)
-                    e.consume();
-            }
-        });
+        levelNumberText = new JTextField();
+
         levelNumberText.setBounds(120, 50, 165, 25);
         panel.add(levelNumberText);
 
 
         buttonLogin = new JButton("START GAME");
-        buttonLogin.setBounds(10, 90, 110, 25);
+        buttonLogin.setBounds(105, 90, 125, 25);
         buttonLogin.addActionListener(new LoginGui()); // To use the actionListener you need to implement the actionPerformed function
         panel.add(buttonLogin);
         frame.setLocationRelativeTo(null); // make thr GUI shows in the middle

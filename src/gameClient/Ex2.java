@@ -24,12 +24,14 @@ public class Ex2 {
     private static int nextNode = -1;
     private static HashMap<Integer, List<node_data>> nextAgentsNodes;
     private static int counter = 0;
+    private static long levelTime;
 
     //TODO: BUGS: when running on 75 m/s it works and 100 it stops.
 
     public static void main(String[] args) {
-//        LoginGui start = new LoginGui();
-//        start.GUI();
+
+        LoginGui start = new LoginGui();
+        start.GUI();
 
         // THE IDEA :
         // To set a Thread that will wait to a call from the LoginGui when the "start game" button will press
@@ -37,23 +39,22 @@ public class Ex2 {
         // because first of all, the LOGIN needs to appear when the Ex2 main runs
         // and after pressing the start game button then the graph GUI needs to start.
 
-        int level_number = 7;
+        int level_number = 3;
         game = Game_Server_Ex2.getServer(level_number); // you have [0,23] games
 
         init();
         game.startGame();
+        _ar.setTime(game.timeToEnd());
+        levelTime = game.timeToEnd();
         System.out.println("game.toString()=" + game.toString());
         System.out.println(game.getAgents());
-        game.chooseNextEdge(0, 6);
-
-        //CL_Agent agent = _ar.getAgents().get(0);
-        //game.chooseNextEdge(agent.getID(), 13);
-        //game.chooseNextEdge(0, 13);
+        System.out.println("Time in seconds : "+game.timeToEnd()/1000.0);
 
         while (game.isRunning()) {
             updateGameBoard();
             try {
                 _win.repaint();
+                //Thread.sleep(game.timeToEnd() <= levelTime / 2 ? 200 : 67);
                 Thread.sleep(100);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -66,95 +67,122 @@ public class Ex2 {
     }
 
     private static void updateGameBoard() {
+        _ar.setTime(game.timeToEnd());
         String getAgentsJson = game.getAgents();
         List<CL_Agent> agents = Arena.getAgents(getAgentsJson, _ar.getGraph());
         _ar.setAgents(agents); //update agents in the arena for the GUI
-        //we want to perform an algorithm only after catching a Pokemon
 
-        boolean isCaught = _ar.isPokemonCaught();
-
-        if (isCaught) {
-            counter++;
-            System.out.println("Counter: " + counter);
-            if (counter==33){
-                System.out.println("test");
+        if (nextAgentsNodes == null) {
+            nextAgentsNodes = new HashMap<>();
+            for (CL_Agent agent : _ar.getAgents()) {
+                nextAgentsNodes.put(agent.getID(), new ArrayList<>());
             }
+        }
 
-            System.out.println("Entered isCaught");
-            String getPokemonsJson = game.getPokemons();
-            List<CL_Pokemon> pokemons = Arena.json2Pokemons(getPokemonsJson);
-            _ar.setPokemons(pokemons); // update pokemon's in the arena for the GUI
+        //we want to perform an algorithm only after catching a Pokemon or if an agent is idle
+        //if we caught a pokemon
+        if (_ar.isPokemonCaught()) {
+            runAlgorithms();
+        } else {
+            for (CL_Agent agent : _ar.getAgents()) {
+                if (agent.get_curr_edge() == null){
+                    System.out.println(game.timeToEnd());
+                }
+                if (agent.get_curr_edge() == null && nextAgentsNodes.get(agent.getID()).size() == 0) { //if we found an agent that is idle
+                    runAlgorithms();
+                    break;
 
-            // This loop going through all the Pokemon's in the game and set on which edge they present
-            for (int i = 0; i < pokemons.size(); i++) {
-                Arena.updateEdge(pokemons.get(i), _ar.getGraph());
+                }
             }
-
-            //CL_Pokemon rarestPokemon = _ar.getRarestPokemon();
-
-                System.out.println("No rare pokemon found.");
-                //loop through all Pokemon's
-                for (int i=0; i< pokemons.size(); i++) {
-                    CL_Pokemon currPokemon = pokemons.get(i);
-                    _ar.searchForNearestAgent(currPokemon);
-                }
-
-                HashMap<Integer, List<List<node_data>>> nearestAgentToPokemon = new HashMap<>();
-
-                for (CL_Agent agent : _ar.getAgents()) {
-                    nearestAgentToPokemon.put(agent.getID(), new ArrayList<>());
-                }
-
-                //loop through all Pokemon's
-                for (int i=0; i< pokemons.size(); i++) {
-                    CL_Pokemon currPokemon = pokemons.get(i);
-                    List<List<node_data>> minPaths = new ArrayList<>();
-                    List<node_data> minPath = null;
-                    CL_Agent minAgent = null;
-                    double minDistance = Double.MAX_VALUE;
-                    for (CL_Agent agent : _ar.getAgents()) {
-                        List<node_data> pokemonPath = agent.getPath(currPokemon);
-                        double pathDistance = pokemonPath.get(pokemonPath.size()-1).getWeight();
-                        if (pathDistance <= minDistance) {
-                            minDistance = pathDistance;
-                            minPath = pokemonPath;
-                            minAgent = agent;
-                        }
-                        nearestAgentToPokemon.get(minAgent.getID()).add(minPath);
-                        //nearestAgentToPokemon.put(minAgent.getID(), minPath);
-                    }
-                }
-
-                double minDistance = Double.MAX_VALUE;
-                List<node_data> minPath = null;
-                for (CL_Agent agent : _ar.getAgents()) {
-                    List<List<node_data>> pathsFromPokemons = nearestAgentToPokemon.get(agent.getID());
-                    for (List<node_data> pathFromPokemon : pathsFromPokemons) {
-                        double pathDistance = pathFromPokemon.get(pathFromPokemon.size() - 1).getWeight();
-                        if (pathDistance <= minDistance) {
-                            minDistance = pathDistance;
-                            minPath = pathFromPokemon;
-                        }
-                    }
-                    nextAgentsNodes = nextAgentsNodes == null ? new HashMap<>() : nextAgentsNodes;
-                    nextAgentsNodes.put(agent.getID(), minPath);
-                }
-
-
         }
 
         for (CL_Agent agent : _ar.getAgents()) {
-            if (nextAgentsNodes != null){
-                List<node_data> agentPath = nextAgentsNodes.get(agent.getID());
-                if (agentPath.size() != 0) {
-                    if (agent.get_curr_edge() == null)
-                    game.chooseNextEdge(agent.getID(), CL_Agent.move(agentPath));
-                }
+            List<node_data> agentPath = nextAgentsNodes.get(agent.getID());
+            if (agentPath.size() != 0) {
+                if (agent.get_curr_edge() == null)
+                game.chooseNextEdge(agent.getID(), CL_Agent.move(agentPath));
             }
         }
 
         game.move();
-        System.out.println(game.getAgents());
+        //System.out.println(game.getAgents());
+    }
+
+    private static void runAlgorithms() {
+        counter++;
+        //System.out.println("Counter: " + counter);
+        if (counter==21){
+            System.out.println("test");
+        }
+
+        //System.out.println("Running Algorithms");
+        String getPokemonsJson = game.getPokemons();
+        List<CL_Pokemon> pokemons = Arena.json2Pokemons(getPokemonsJson);
+        _ar.setPokemons(pokemons); // update pokemon's in the arena for the GUI
+
+        // This loop going through all the Pokemon's in the game and set on which edge they present
+        for (int i = 0; i < pokemons.size(); i++) {
+            Arena.updateEdge(pokemons.get(i), _ar.getGraph());
+        }
+
+        CL_Pokemon rarestPokemon = _ar.getRarestPokemon();
+        //there is no rare pokemon
+        if (rarestPokemon == null) {
+            System.out.println("No rare pokemon found.");
+            //loop through all Pokemon's
+            for (int i=0; i< pokemons.size(); i++) {
+                CL_Pokemon currPokemon = pokemons.get(i);
+                _ar.searchForNearestAgent(currPokemon);
+            }
+
+            HashMap<Integer, List<List<node_data>>> nearestAgentToPokemon = new HashMap<>();
+
+            for (CL_Agent agent : _ar.getAgents()) {
+                nearestAgentToPokemon.put(agent.getID(), new ArrayList<>());
+            }
+
+            //loop through all Pokemon's
+            for (int i=0; i< pokemons.size(); i++) {
+                CL_Pokemon currPokemon = pokemons.get(i);
+                List<List<node_data>> minPaths = new ArrayList<>();
+                List<node_data> minPath = null;
+                CL_Agent minAgent = null;
+                double minDistance = Double.MAX_VALUE;
+                for (CL_Agent agent : _ar.getAgents()) {
+                    List<node_data> pokemonPath = agent.getPath(currPokemon);
+                    double pathDistance = pokemonPath.get(pokemonPath.size()-1).getWeight();
+                    if (pathDistance <= minDistance) {
+                        minDistance = pathDistance;
+                        minPath = pokemonPath;
+                        minAgent = agent;
+                    }
+                    nearestAgentToPokemon.get(minAgent.getID()).add(minPath);
+                    //nearestAgentToPokemon.put(minAgent.getID(), minPath);
+                }
+            }
+
+            double minDistance = Double.MAX_VALUE;
+            List<node_data> minPath = null;
+            for (CL_Agent agent : _ar.getAgents()) {
+                List<List<node_data>> pathsFromPokemons = nearestAgentToPokemon.get(agent.getID());
+                for (List<node_data> pathFromPokemon : pathsFromPokemons) {
+                    double pathDistance = pathFromPokemon.get(pathFromPokemon.size() - 1).getWeight();
+                    if (pathDistance <= minDistance) {
+                        minDistance = pathDistance;
+                        minPath = pathFromPokemon;
+                    }
+                }
+                nextAgentsNodes.put(agent.getID(), minPath);
+            }
+
+        }
+
+        //there is a rare pokemon
+        else {
+            System.out.println("Found rare pokemon! value: " + rarestPokemon.getValue());
+            CL_Agent nearestAgent = _ar.searchForNearestAgent(rarestPokemon);
+            nextAgentsNodes.put(nearestAgent.getID(), nearestAgent.getPath(rarestPokemon));
+        }
     }
 
     private static void init() {
@@ -189,6 +217,7 @@ public class Ex2 {
         _win.setResizable(true); // suppose to work but doesn't
         _win.update(_ar);
 
+
         _win.setVisible(true);
         _win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -216,8 +245,8 @@ public class Ex2 {
                     key_edge = c.get_edge().getSrc();  //the key of the src node of the edge that the pokemon is present on
                 }
 
-                //game.addAgent(key_edge);
-                game.addAgent(7);
+                game.addAgent(key_edge);
+                //game.addAgent(i);
             }
         } catch (JSONException e) {
             e.printStackTrace();

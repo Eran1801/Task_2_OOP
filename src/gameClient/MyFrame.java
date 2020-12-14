@@ -31,7 +31,6 @@ public class MyFrame extends JFrame {
 
     MyFrame(String a) {
         super(a);
-
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -69,6 +68,7 @@ public class MyFrame extends JFrame {
         drawPokemons(tempPaintingGraphics);
         drawAgants(tempPaintingGraphics);
         drawInfo(tempPaintingGraphics);
+        drawTime(tempPaintingGraphics);
         g.drawImage(tempPaintingImage, 0, 0, this);
     }
 
@@ -93,11 +93,13 @@ public class MyFrame extends JFrame {
                 edge_data e = itr.next();
                 g.setColor(Color.gray);
                 drawEdge(e, g);
+                drawTime(g);
             }
         }
     }
 
     private void drawPokemons(Graphics g) {
+        g.setFont(new Font(Font.SANS_SERIF,  Font.BOLD, 10));
         List<CL_Pokemon> fs = _ar.getPokemons(); // the Pokemon's are in the arena
         if (fs != null) {
             Iterator<CL_Pokemon> itr = fs.iterator();
@@ -122,22 +124,24 @@ public class MyFrame extends JFrame {
     }
 
     private void drawAgants(Graphics g) {
+        g.setFont(new Font(Font.SANS_SERIF,  Font.BOLD, 10));
         List<CL_Agent> rs = _ar.getAgents();
-        //	Iterator<OOP_Point3D> itr = rs.iterator();
         g.setColor(Color.red);// the color of the agents
         int i = 0; // runs on the agent amount
         while (rs != null && i < rs.size()) {
             geo_location c = rs.get(i).getLocation(); // getting the agent in location 'i'
             int r = 8;
-            i++;
             if (c != null) {
                 geo_location fp = this._w2f.world2frame(c);
                 g.fillOval((int) fp.x() - r, (int) fp.y() - r, 2 * r, 2 * r);
+                g.drawString("" + rs.get(i).getValue(), (int) fp.x()-r, (int) fp.y() - 10);
             }
+        i++;
         }
     }
 
     private void drawNode(node_data n, int r, Graphics g) {
+        g.setFont(new Font(Font.SANS_SERIF,  Font.BOLD, 10));
         geo_location pos = n.getLocation(); // the position of the node
         geo_location fp = this._w2f.world2frame(pos);
         g.fillOval((int) fp.x() - r, (int) fp.y() - r, 2 * r, 2 * r);
@@ -145,6 +149,7 @@ public class MyFrame extends JFrame {
     }
 
     private void drawEdge(edge_data e, Graphics g) {
+        g.setFont(new Font(Font.SANS_SERIF,  Font.BOLD, 10));
         directed_weighted_graph gg = _ar.getGraph();
         geo_location s = gg.getNode(e.getSrc()).getLocation();
         geo_location d = gg.getNode(e.getDest()).getLocation();
@@ -154,8 +159,19 @@ public class MyFrame extends JFrame {
         int type = e.getSrc() > e.getDest() ? 1 : -1;
         Point3D middlePoint = ((Point3D) (s0)).getMiddlePoint(d0);
         double eWeight = e.getWeight();
+        g.setColor(type > 0 ? Color.green : Color.orange);
+
         eWeight = Double.parseDouble(new DecimalFormat("##.##").format(eWeight));
         g.drawString("" + eWeight, (int) middlePoint.x(), type > 0 ? (int) middlePoint.y() + 20 : (int) middlePoint.y() - 20);
         //	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
+    }
+
+    private void drawTime(Graphics g) {
+        g.setFont(new Font(Font.SANS_SERIF,  Font.BOLD, 18));
+        geo_location location = new Point3D(35.18753053591606,32.10878225882353, 0);
+        geo_location locationInFrame = this._w2f.world2frame(location);
+        //System.out.println(locationInFrame);
+        g.setColor(Color.black);
+        g.drawString("Time Left : " + _ar.getTime() / 1000, (int) locationInFrame.x(),(int) locationInFrame.y());
     }
 }

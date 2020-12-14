@@ -29,6 +29,7 @@ public class Arena {
     private static Point3D MIN = new Point3D(0, 100, 0);
     private static Point3D MAX = new Point3D(0, 100, 0);
     private List<Double> agentsValues;
+    private long time;
 
     public Arena() {
         ;
@@ -264,7 +265,7 @@ public class Arena {
 
     //returns the rarest pokemon if there is one. null if there is no rare pokemon
     public CL_Pokemon getRarestPokemon() {
-        final double rarePokemonThreshold = _pokemons.size() / 2; //TODO: remove the "/2"
+        final double rarePokemonThreshold = _pokemons.size() * 1.5;
         CL_Pokemon[] mostAndLeastRarePokemons = getMostAndLeastRarePokemons();
         CL_Pokemon rarestPokemon = mostAndLeastRarePokemons[0];
         CL_Pokemon leastRarePokemon = mostAndLeastRarePokemons[1];
@@ -279,7 +280,6 @@ public class Arena {
         }
     }
 
-    //TODO: check how speed affects this function
     //Calculates all agents paths to a pokemon and saves them. Returns the agent that can reach the pokemon fastest
     public CL_Agent searchForNearestAgent(CL_Pokemon pokemon) {
 
@@ -315,5 +315,13 @@ public class Arena {
 
     public void setGraphAlgo(DWGraph_Algo dwgAlgo) {
         this._ggAlgo=dwgAlgo;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    public long getTime() {
+        return this.time;
     }
 }

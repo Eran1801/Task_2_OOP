@@ -280,29 +280,32 @@ public class Arena {
     }
 
     //TODO: check how speed affects this function
-    public HashMap<Integer, List<node_data>> searchForNearestAgent(CL_Pokemon rarestPokemon) {
+    //Calculates all agents paths to a pokemon and saves them. Returns the agent that can reach the pokemon fastest
+    public CL_Agent searchForNearestAgent(CL_Pokemon pokemon) {
 
-        HashMap<Integer, List<node_data>> pathMap = new HashMap<>();
-        edge_data rarestPokemonEdge = rarestPokemon.get_edge();
-        int rarestPokemonEdgeType = rarestPokemon.getType();
+        edge_data pokemonEdge = pokemon.get_edge();
+        int pokemonEdgeType = pokemon.getType();
 
         double minDistance = Double.MAX_VALUE;
         List<node_data> path = new ArrayList<>();
         CL_Agent nearestAgent = null;
         for (CL_Agent agent : this.getAgents()) {
-            path = this._ggAlgo.shortestPath(agent.get_curr_edge().getDest(), rarestPokemonEdgeType > 0 ? rarestPokemonEdge.getDest() : rarestPokemonEdge.getSrc());
+            int fromNode;
+            fromNode = agent.get_curr_edge() != null ? agent.get_curr_edge().getDest() : agent.getSrcNode();
+            path = this._ggAlgo.shortestPath(fromNode, pokemonEdge.getSrc());
             double distance = path.get(path.size() - 1).getWeight();
             if (distance < minDistance) {
                 minDistance = distance;
                 nearestAgent = agent;
             }
+            if (path.size() >= 1) {
+                path.remove(0); //remove the first node //TODO: when an agent is idle, i don't think we need to remove the first node.
+                node_data lastNode = this._gg.getNode(pokemonEdge.getDest());
+                path.add(lastNode);
+            }
+            agent.setPath(pokemon, path);
         }
-        path.remove(0); //remove the first node //TODO: when an agent is idle, i don't think we need to remove the first node.
-        node_data lastNode = this._gg.getNode(rarestPokemonEdge.getDest());
-        path.add(lastNode);
-        //nearestAgent.setPath(path);
-        pathMap.put(nearestAgent.getID(), path);
-        return pathMap;
+        return nearestAgent;
 
     }
 

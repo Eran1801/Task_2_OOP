@@ -10,6 +10,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -48,7 +49,6 @@ public class Ex2 {
 
         while (game.isRunning()) {
             updateGameBoard();
-            game.move();
             try {
                 _win.repaint();
                 Thread.sleep(75);
@@ -58,6 +58,7 @@ public class Ex2 {
         }
 
 
+        System.out.println(game);
         System.exit(0);
 
     }
@@ -90,17 +91,56 @@ public class Ex2 {
                 //loop through all Pokemon's
                 for (int i=0; i< pokemons.size(); i++) {
                     CL_Pokemon currPokemon = pokemons.get(i);
+                    _ar.searchForNearestAgent(currPokemon);
+                }
+
+                HashMap<Integer, List<List<node_data>>> nearestAgentToPokemon = new HashMap<>();
+
+                for (CL_Agent agent : _ar.getAgents()) {
+                    nearestAgentToPokemon.put(agent.getID(), new ArrayList<>());
+                }
+
+                //loop through all Pokemon's
+                for (int i=0; i< pokemons.size(); i++) {
+                    CL_Pokemon currPokemon = pokemons.get(i);
+                    List<List<node_data>> minPaths = new ArrayList<>();
+                    List<node_data> minPath = null;
+                    CL_Agent minAgent = null;
+                    double minDistance = Double.MAX_VALUE;
+                    for (CL_Agent agent : _ar.getAgents()) {
+                        List<node_data> pokemonPath = agent.getPath(currPokemon);
+                        double pathDistance = pokemonPath.get(pokemonPath.size()-1).getWeight();
+                        if (pathDistance <= minDistance) {
+                            minDistance = pathDistance;
+                            minPath = pokemonPath;
+                            minAgent = agent;
+                        }
+                        nearestAgentToPokemon.get(minAgent.getID()).add(minPath);
+                        //nearestAgentToPokemon.put(minAgent.getID(), minPath);
+                    }
+                }
+
+                double minDistance = Double.MAX_VALUE;
+                List<node_data> minPath = null;
+                for (CL_Agent agent : _ar.getAgents()) {
+                    List<List<node_data>> pathsFromPokemons = nearestAgentToPokemon.get(agent.getID());
+                    for (List<node_data> pathFromPokemon : pathsFromPokemons) {
+                        double pathDistance = pathFromPokemon.get(pathFromPokemon.size() - 1).getWeight();
+                        if (pathDistance <= minDistance) {
+                            minDistance = pathDistance;
+                            minPath = pathFromPokemon;
+                        }
+                    }
+                    nextAgentsNodes.put(agent.getID(), minPath);
                 }
             }
 
             //there is a rare pokemon
             else {
                 System.out.println("Found rare pokemon! value: " + rarestPokemon.getValue());
-                nextAgentsNodes = _ar.searchForNearestAgent(rarestPokemon);
-                //System.out.println("Removed First Node: " + nearestAgent.removeFirstNode());
-                //nextNode = nearestAgent.move();
-                //game.chooseNextEdge(nearestAgent.getID(), nearestAgent.move());
-//                nextNode=nearestAgent.move();
+                CL_Agent nearestAgent = _ar.searchForNearestAgent(rarestPokemon);
+                nextAgentsNodes = nextAgentsNodes == null ? new HashMap<>() : nextAgentsNodes;
+                nextAgentsNodes.put(nearestAgent.getID(), nearestAgent.getPath(rarestPokemon));
             }
         }
 
@@ -108,6 +148,7 @@ public class Ex2 {
             if (nextAgentsNodes != null){
                 List<node_data> agentPath = nextAgentsNodes.get(agent.getID());
                 if (agentPath.size() != 0) {
+                    if (agent.get_curr_edge() == null)
                     game.chooseNextEdge(agent.getID(), CL_Agent.move(agentPath));
                 }
             }

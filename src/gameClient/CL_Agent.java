@@ -7,6 +7,7 @@ import api.node_data;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class CL_Agent {
@@ -22,7 +23,9 @@ public class CL_Agent {
 	private CL_Pokemon _curr_pokemon;
 	private long _sg_dt;
 	private double _value;
+	private double distanceFromNode;
 	private List<node_data> path;
+	private HashMap<CL_Pokemon, List<node_data>> pokemonsPaths;
 
 
 
@@ -33,6 +36,7 @@ public class CL_Agent {
 		_pos = _curr_node.getLocation();
 		_id = -1;
 		setSpeed(0);
+		pokemonsPaths = new HashMap<>();
 	}
 	public void update(String json) {
 		JSONObject line;
@@ -169,17 +173,21 @@ public class CL_Agent {
 		this._sg_dt = _sg_dt;
 	}
 
-	public void setPath(List<node_data> path) {
-		this.path = path;
+	public void setPath(CL_Pokemon pokemon, List<node_data> path) {
+		this.pokemonsPaths.put(pokemon, path);
+	}
+
+	public List<node_data> getPath(CL_Pokemon pokemon) {
+		return this.pokemonsPaths.get(pokemon);
 	}
 
 	public static int move(List<node_data> path) {
-		int key = path.remove(0).getKey();
-		System.out.println("Next Node Key: " + key);
-		return key;
+		return path.remove(0).getKey();
 	}
 
-	public int removeFirstNode() {
+	/*public int removeFirstNode() {
 		return this.path.remove(0).getKey();
-	}
+	}*/
+
+
 }

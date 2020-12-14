@@ -128,6 +128,10 @@ public class DWGraph_DS implements directed_weighted_graph {
         copyGraph.nodes = copyNodesMap; //set the new graph nodes to the new HashMap we made.
         return copyGraph;
     }
+    public node_data copyNode(node_data node){
+        NodeData nodeUpCasted = (NodeData)node;
+        return new NodeData(nodeUpCasted);
+    }
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -23,6 +23,9 @@ public class Ex2 {
     private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     private static int nextNode = -1;
     private static HashMap<Integer, List<node_data>> nextAgentsNodes;
+    private static int counter = 0;
+
+    //TODO: BUGS: when running on 75 m/s it works and 100 it stops.
 
     public static void main(String[] args) {
 //        LoginGui start = new LoginGui();
@@ -51,12 +54,11 @@ public class Ex2 {
             updateGameBoard();
             try {
                 _win.repaint();
-                Thread.sleep(75);
+                Thread.sleep(100);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
 
         System.out.println(game);
         System.exit(0);
@@ -72,6 +74,12 @@ public class Ex2 {
         boolean isCaught = _ar.isPokemonCaught();
 
         if (isCaught) {
+            counter++;
+            System.out.println("Counter: " + counter);
+            if (counter==33){
+                System.out.println("test");
+            }
+
             System.out.println("Entered isCaught");
             String getPokemonsJson = game.getPokemons();
             List<CL_Pokemon> pokemons = Arena.json2Pokemons(getPokemonsJson);
@@ -80,13 +88,10 @@ public class Ex2 {
             // This loop going through all the Pokemon's in the game and set on which edge they present
             for (int i = 0; i < pokemons.size(); i++) {
                 Arena.updateEdge(pokemons.get(i), _ar.getGraph());
-
             }
 
-            CL_Pokemon rarestPokemon = _ar.getRarestPokemon();
+            //CL_Pokemon rarestPokemon = _ar.getRarestPokemon();
 
-            //there is no rare pokemon
-            if (rarestPokemon == null) {
                 System.out.println("No rare pokemon found.");
                 //loop through all Pokemon's
                 for (int i=0; i< pokemons.size(); i++) {
@@ -131,17 +136,11 @@ public class Ex2 {
                             minPath = pathFromPokemon;
                         }
                     }
+                    nextAgentsNodes = nextAgentsNodes == null ? new HashMap<>() : nextAgentsNodes;
                     nextAgentsNodes.put(agent.getID(), minPath);
                 }
-            }
 
-            //there is a rare pokemon
-            else {
-                System.out.println("Found rare pokemon! value: " + rarestPokemon.getValue());
-                CL_Agent nearestAgent = _ar.searchForNearestAgent(rarestPokemon);
-                nextAgentsNodes = nextAgentsNodes == null ? new HashMap<>() : nextAgentsNodes;
-                nextAgentsNodes.put(nearestAgent.getID(), nearestAgent.getPath(rarestPokemon));
-            }
+
         }
 
         for (CL_Agent agent : _ar.getAgents()) {
@@ -186,7 +185,7 @@ public class Ex2 {
         _win = new MyFrame("Pokemon Game");
         ImageIcon iconGraph = new ImageIcon("src/gameClient/pic/Graph.png");
         _win.setIconImage(iconGraph.getImage());
-        _win.setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
+        _win.setSize( 800 , 600 );
         _win.setResizable(true); // suppose to work but doesn't
         _win.update(_ar);
 

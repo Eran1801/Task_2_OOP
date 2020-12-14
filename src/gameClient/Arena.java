@@ -292,17 +292,21 @@ public class Arena {
         for (CL_Agent agent : this.getAgents()) {
             int fromNode;
             fromNode = agent.get_curr_edge() != null ? agent.get_curr_edge().getDest() : agent.getSrcNode();
-            path = this._ggAlgo.shortestPath(fromNode, pokemonEdge.getSrc());
-            double distance = path.get(path.size() - 1).getWeight();
+            if (fromNode != pokemonEdge.getSrc()) { //no need to do shortest path from node to self, so we just use a empty path
+                path = this._ggAlgo.shortestPath(fromNode, pokemonEdge.getSrc());
+            }
+            double distance = path.size() != 0 ? path.get(path.size() - 1).getWeight() : pokemonEdge.getWeight();
             if (distance < minDistance) {
                 minDistance = distance;
                 nearestAgent = agent;
             }
             if (path.size() >= 1) {
                 path.remove(0); //remove the first node //TODO: when an agent is idle, i don't think we need to remove the first node.
-                node_data lastNode = this._gg.getNode(pokemonEdge.getDest());
-                path.add(lastNode);
             }
+            node_data lastNode = ((DWGraph_DS) (_gg)).copyNode(_gg.getNode(_gg.getNode(pokemonEdge.getDest()).getKey())); //copy the last node because we want to add weight to it and we don't want to do that on the original node
+            lastNode.setWeight(minDistance + pokemonEdge.getWeight());
+            path.add(lastNode);
+
             agent.setPath(pokemon, path);
         }
         return nearestAgent;

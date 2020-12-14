@@ -22,7 +22,6 @@ public class CL_Agent {
 	private CL_Pokemon _curr_pokemon;
 	private long _sg_dt;
 	private double _value;
-	private double distanceFromNode;
 	private List<node_data> path;
 
 
@@ -174,8 +173,9 @@ public class CL_Agent {
 		this.path = path;
 	}
 
-	public int move() {
-		int key = this.path.remove(0).getKey();
+	public static int move(List<node_data> path) {
+		int key = path.remove(0).getKey();
+		System.out.println("Next Node Key: " + key);
 		return key;
 	}
 

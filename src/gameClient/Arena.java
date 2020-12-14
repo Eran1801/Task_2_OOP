@@ -280,8 +280,9 @@ public class Arena {
     }
 
     //TODO: check how speed affects this function
-    public CL_Agent searchForNearestAgent(CL_Pokemon rarestPokemon) {
+    public HashMap<Integer, List<node_data>> searchForNearestAgent(CL_Pokemon rarestPokemon) {
 
+        HashMap<Integer, List<node_data>> pathMap = new HashMap<>();
         edge_data rarestPokemonEdge = rarestPokemon.get_edge();
         int rarestPokemonEdgeType = rarestPokemon.getType();
 
@@ -296,12 +297,12 @@ public class Arena {
                 nearestAgent = agent;
             }
         }
-
+        path.remove(0); //remove the first node //TODO: when an agent is idle, i don't think we need to remove the first node.
         node_data lastNode = this._gg.getNode(rarestPokemonEdge.getDest());
         path.add(lastNode);
-        nearestAgent.setPath(path);
-
-        return nearestAgent;
+        //nearestAgent.setPath(path);
+        pathMap.put(nearestAgent.getID(), path);
+        return pathMap;
 
     }
 

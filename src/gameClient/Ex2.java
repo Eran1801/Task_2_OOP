@@ -10,8 +10,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
 
 public class Ex2 {
 
@@ -19,6 +20,8 @@ public class Ex2 {
     private static Arena _ar;
     private static game_service game;
     private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private static int nextNode = -1;
+    private static HashMap<Integer, List<node_data>> nextAgentsNodes;
 
     public static void main(String[] args) {
 //        LoginGui start = new LoginGui();
@@ -63,20 +66,21 @@ public class Ex2 {
         String getAgentsJson = game.getAgents();
         List<CL_Agent> agents = Arena.getAgents(getAgentsJson, _ar.getGraph());
         _ar.setAgents(agents); //update agents in the arena for the GUI
-
         //we want to perform an algorithm only after catching a Pokemon
-        if (_ar.isPokemonCaught() ) {
+
+        boolean isCaught = _ar.isPokemonCaught();
+
+        if (isCaught) {
             System.out.println("Entered isCaught");
             String getPokemonsJson = game.getPokemons();
             List<CL_Pokemon> pokemons = Arena.json2Pokemons(getPokemonsJson);
-            _ar.setPokemons(pokemons); //update pokemon's in the arena for the GUI
+            _ar.setPokemons(pokemons); // update pokemon's in the arena for the GUI
 
             // This loop going through all the Pokemon's in the game and set on which edge they present
             for (int i = 0; i < pokemons.size(); i++) {
                 Arena.updateEdge(pokemons.get(i), _ar.getGraph());
-            }
 
-            System.out.println(game.getPokemons());
+            }
 
             CL_Pokemon rarestPokemon = _ar.getRarestPokemon();
 
@@ -92,13 +96,23 @@ public class Ex2 {
             //there is a rare pokemon
             else {
                 System.out.println("Found rare pokemon! value: " + rarestPokemon.getValue());
-                System.out.println(game.toString());
-                CL_Agent nearestAgent = _ar.searchForNearestAgent(rarestPokemon);
-                System.out.println("Test1: " + nearestAgent.removeFirstNode());
-                game.chooseNextEdge(nearestAgent.getID(), nearestAgent.move());
-
+                nextAgentsNodes = _ar.searchForNearestAgent(rarestPokemon);
+                //System.out.println("Removed First Node: " + nearestAgent.removeFirstNode());
+                //nextNode = nearestAgent.move();
+                //game.chooseNextEdge(nearestAgent.getID(), nearestAgent.move());
+//                nextNode=nearestAgent.move();
             }
         }
+
+        for (CL_Agent agent : _ar.getAgents()) {
+            if (nextAgentsNodes != null){
+                List<node_data> agentPath = nextAgentsNodes.get(agent.getID());
+                if (agentPath.size() != 0) {
+                    game.chooseNextEdge(agent.getID(), CL_Agent.move(agentPath));
+                }
+            }
+        }
+
         game.move();
         System.out.println(game.getAgents());
     }

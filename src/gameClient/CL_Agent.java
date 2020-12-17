@@ -28,7 +28,6 @@ public class CL_Agent {
 	private HashMap<CL_Pokemon, List<node_data>> pokemonsPaths;
 
 
-
 	public CL_Agent(directed_weighted_graph g, int start_node) {
 		_gg = g;
 		setMoney(0);

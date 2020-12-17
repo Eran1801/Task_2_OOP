@@ -46,7 +46,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         for (int nodeKey : nodesKeysArr) {
             DWGraph_DS g = (DWGraph_DS) this.copy();
             NodeData startingNode = (NodeData) g.getNode(nodeKey);
-            Queue<NodeData> q = new LinkedList<NodeData>();
+            Queue<NodeData> q = new LinkedList<>();
             q.add(startingNode); //add the first node to the queue
             int numOfNodesInSubGraph = 1; //a counter for how many nodes we went through in BFS, in the end of the BFS we compare this to the graph size
             startingNode.setInfo("BLACK"); //mark the node black, so we know we already visited this node.

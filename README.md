@@ -14,10 +14,10 @@
     There is a clock that counting backwards and when the clock gets to zero the game ends.
     The direction of the agents movement is based on the value of the pokemon.
     #### How to run the game:
-    We have made an executable jar. it is located in Game\Ex2.jar.
+    We have made an executable jar. it is located in the root folder with the name Ex2.jar.
     to launch it simply double click the jar file or write the following in terminal in the project root folder:
   
-    `java -jar Game/Ex2.jar <ID Here> <Game Level Here>`
+    `java -jar Ex2.jar <ID Here> <Game Level Here>`
   
     #### Our project is divided to two parts:
     

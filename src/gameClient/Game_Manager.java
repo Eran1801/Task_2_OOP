@@ -51,6 +51,7 @@ public class Game_Manager implements Runnable  {
 
     private void initGame() {
         game = Game_Server_Ex2.getServer(levelNumber); // you have [0,23] games
+        game.login(ID);
         String g = game.getGraph();
         String ps = game.getPokemons();
         DWGraph_DS dwg = new DWGraph_DS();

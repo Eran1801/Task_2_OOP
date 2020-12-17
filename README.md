@@ -19,7 +19,8 @@
   
     `java -jar Game/Ex2.jar <ID Here> <Game Level Here>`
   
-    ####Our project is divided to two parts:
+    #### Our project is divided to two parts:
+    
     ### Part 1 : building the graph and his algorithms 
     
     In this part we have 4 important interfaces:

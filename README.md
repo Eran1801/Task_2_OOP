@@ -1,6 +1,6 @@
 ## Welcome to our README about the game: "The Pokemon's Challenge"
 
-<img src ="src/gameClient/pic/pikachu.png" width="350" > 
+<img src="src/gameClient/pic/pikachu.png" width="350"> 
 
 ### This Object Oriented Programming task was written by:
 
@@ -13,8 +13,13 @@
     The agents earn points while collecting a pokemon. Each pokemon have different value.
     There is a clock that counting backwards and when the clock gets to zero the game ends.
     The direction of the agents movement is based on the value of the pokemon.
-    
-    Our project is divided to two parts:
+    #### How to run the game:
+    We have made an executable jar. it is located in Game\Ex2.jar.
+    to launch it simply double click the jar file or write the following in terminal in the project root folder:
+  
+    `java -jar Game/Ex2.jar <ID Here> <Game Level Here>`
+  
+    ####Our project is divided to two parts:
     ### Part 1 : building the graph and his algorithms 
     
     In this part we have 4 important interfaces:
@@ -25,23 +30,23 @@
   
   3 . edge_data - this interface implemented by the EdgeData class and represents a edge in our graph.
   
-  4 . dw_graph_algorithms - this interface implemented by the WDGraph_Algo class and represents bunch of algorithms based on the graph we've created in DGraph.
+  4 . dw_graph_algorithms - this interface implemented by the WDGraph_Algo class and represents some algorithms based on the graph we've created in DGraph.
 
-   ### part 2 : building the Pokemon's challenge game
+   ### part 2 : building the Pokemons challenge game client
    
    in this part we have a numbers of class that we summarize them here:
    
-  1 . Ex2 - this class represents the main class of the program, inside her we also representing the LoginGUI 
+  1 . Ex2 - this class represents the main class of the program, Running Ex2 main will launch the login menu (or launch the game if passing the ID and level number as args) 
   
-  2 . Game_Manager - 
+  2 . Game_Manager - this class handles the game client logic. it starts the game and calculates algorithms that decides the agents next moves
   
-  3 . CL_Agent - this class represents the Agents in the game 
+  3 . CL_Agent - this class represents the Agents in the game. it gets the updated data from the Game server and makes a Agent object out of it.
   
-  4 . CL-Pokemon - this class represents the Agents in the game 
+  4 . CL-Pokemon - this class represents the Agents in the game. it gets the updated data from the Game server and makes a Pokemon object out of it. 
   
-  5 . Arena - 
+  5 . Arena - this class holds all of the agents, pokemons and has algorithms that helps decide the next move in the game.
   
-  6 . GameGUI - this class represents all the steps to make the GUI of the grpah 
+  6 . GameGUI - this class is a GUI for the game. it gets the updated data from the Arena and shows a visual representation of the game (visualizes the graph, edges, pokemons, agents and game info)
   
   
   
@@ -50,11 +55,14 @@
 1 . Dijkstra algorithms : to get the shortestPathDist and the shortestPath
 
 2 . BFS algorithms : to know if in the graph there is a valid path from each node to each other node
+
+3 . Rare Pokemon Algorithm : a algorithm we made that figures out if there's a pokemon that is much more valuable than the others, if such pokemon found, it will assign the nearest agent to the task of capturing it
    
   #### Time complexity of the algorithms:
 	
 - Dijkstra algorithms = O(|E|*log|V|)
-- BFS algorithms = O ( v + E ) 
+- BFS algorithms = O(V + E)
+- Rare Pokemon Algorithm = O(V + E)
 
 		V = vertex
 		E = edges

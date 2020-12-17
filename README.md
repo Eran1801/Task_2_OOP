@@ -1,6 +1,6 @@
 ## Welcome to our README about the game: "The Pokemon's Challenge"
 
-### This Object oriented programming task was written by:
+#### This Object oriented programming task was written by:
 
     * Etay Matzliah - 205987795
     * Eran Levy - 311382360

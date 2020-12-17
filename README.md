@@ -1,4 +1,4 @@
-## Welcome to our README about the game: "The Pokemon's Challenge"
+## Welcome to our submission of the game: "The Pokemon's Challenge"
 
 <img src="src/gameClient/pic/pikachu.png" width="350"> 
 

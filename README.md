@@ -1,4 +1,4 @@
-### Welcome to our README about the game: "The Pokemon's Challenge"
+# Welcome to our README about the game: "The Pokemon's Challenge"
 
 ## This Object oriented programming task was written by:
 

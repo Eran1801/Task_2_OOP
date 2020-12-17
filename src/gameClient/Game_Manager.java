@@ -8,9 +8,6 @@ import api.node_data;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -18,7 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Game_Manager implements Runnable {
+public class Game_Manager implements Runnable  {
 
     private int ID;
     private int levelNumber;
@@ -234,6 +231,7 @@ public class Game_Manager implements Runnable {
 
 
         //TODO: when there are more than 1 agent, check if the other agents are going to the nearest pokemon. if not maybe we rather just delete this algorithm.
+        // TODO: yes there are ! in game 17
         //there is a rare pokemon
         else {
             System.out.println("Found rare pokemon! value: " + rarestPokemon.getValue());

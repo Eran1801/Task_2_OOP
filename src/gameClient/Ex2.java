@@ -54,7 +54,7 @@ class LoginGUI extends JFrame {
 
         this.add(panel);
 
-        // now lets work on the panel //TODO check what this does
+        // now lets work on the panel //TODO check what this does - The guy in the tutorial didn't explain but you can see what happens without
         panel.setLayout(null);
 
         // JLabel is used to display a short string or an image icon. JLabel can display text, image or both
@@ -72,7 +72,7 @@ class LoginGUI extends JFrame {
         userIdText = new JTextField();
         userIdText.addKeyListener(new KeyAdapter() { // limits the Id number up to 9
             @Override
-            public void keyTyped(KeyEvent e) {
+            public void keyTyped(KeyEvent e) { // taking care that the user id will be max 9 numbers
                 if (userIdText.getText().length() >= 9)
                     e.consume();
             }
@@ -85,23 +85,21 @@ class LoginGUI extends JFrame {
         levelNumberText.setBounds(120, 50, 165, 25);
         panel.add(levelNumberText);
 
-
         buttonLogin = new JButton("START GAME");
         buttonLogin.setBounds(100, 90, 120, 25);
         buttonLogin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == buttonLogin){
+                if (e.getSource() == buttonLogin){ // the source is the object that happens on this action
                     if (userIdText.getText().length() == 9 && levelNumberText.getText().length() !=0){
                         Game_Manager gameManager = new Game_Manager();
                         gameManager.setGameData(Integer.parseInt(userIdText.getText()), Integer.parseInt(levelNumberText.getText()));
-                        new Thread(gameManager).start();
+                        new Thread(gameManager).start(); // TODO :here the game is starting ?
                         thisGUI.dispose();
                     }
                 }
             }
         });
         panel.add(buttonLogin);
-
     }
 }

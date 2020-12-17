@@ -39,7 +39,6 @@ public class GameGUI extends JFrame{
 
         });
 
-
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         refreshScreen();
@@ -174,7 +173,7 @@ public class GameGUI extends JFrame{
                 repaint();
             }
         });
-        timer.setRepeats(true);
+        timer.setRepeats(true); // TODO - who is the listener of this timer ?
         timer.setDelay(16);
         timer.start();
     }

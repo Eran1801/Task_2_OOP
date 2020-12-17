@@ -168,10 +168,8 @@ public class MyFrame extends JFrame {
 
     private void drawTime(Graphics g) {
         g.setFont(new Font(Font.SANS_SERIF,  Font.BOLD, 18));
-        geo_location location = new Point3D(35.18753053591606,32.10878225882353, 0);
-        geo_location locationInFrame = this._w2f.world2frame(location);
-        //System.out.println(locationInFrame);
         g.setColor(Color.black);
-        g.drawString("Time Left : " + _ar.getTime() / 1000, (int) locationInFrame.x(),(int) locationInFrame.y());
+        //g.drawString("Time Left : " + _ar.getTime() / 1000, (int) locationInFrame.x(),(int) locationInFrame.y());
+        g.drawString("Time Left : " + _ar.getTime() / 1000, 80, 80);
     }
 }

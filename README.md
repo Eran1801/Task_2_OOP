@@ -27,16 +27,23 @@
    in this part we have a numbers of class that we summarize them here:
    
   1 . Ex2 - this class represents the main class of the program, inside her we also representing the LoginGUI 
+  
   2 . Game_Manager - 
+  
   3 . CL_Agent - this class represents the Agents in the game 
+  
   4 . CL-Pokemon - this class represents the Agents in the game 
+  
   5 . Arena - 
+  
   6 . GameGUI - this class represents all the steps to make the GUI of the grpah 
   
   
+  
   #### The algorithms that we used in this project is : 
-
+  
 1 . Dijkstra algorithms : to get the shortestPathDist and the shortestPath
+
 2 . BFS algorithms : to know if in the graph there is a valid path from each node to each other node
    
   #### Time complexity of the algorithms:

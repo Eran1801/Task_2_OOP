@@ -30,6 +30,7 @@ public class Arena {
     private static Point3D MAX = new Point3D(0, 100, 0);
     private List<Double> agentsValues;
     private long time;
+    private int level;
 
     public Arena() {
         ;
@@ -296,6 +297,7 @@ public class Arena {
                 path = this._ggAlgo.shortestPath(fromNode, pokemonEdge.getSrc());
             }
             double distance = path.size() != 0 ? path.get(path.size() - 1).getWeight() : pokemonEdge.getWeight();
+            //distance /= agent.getSpeed(); //TODO: check this out, Theoretically this line should be good, but it's not. that way only 1 agent is eating all the pokemons and the other agents staying slow.
             if (distance < minDistance) {
                 minDistance = distance;
                 nearestAgent = agent;
@@ -323,5 +325,13 @@ public class Arena {
 
     public long getTime() {
         return this.time;
+    }
+
+    public String getLevel() {
+        return "" + this.level;
+    }
+
+    public void setLevel(int levelNumber) {
+        this.level = levelNumber;
     }
 }

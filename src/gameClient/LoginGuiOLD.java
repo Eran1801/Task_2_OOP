@@ -1,13 +1,12 @@
 package gameClient;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class LoginGui implements ActionListener {
+public class LoginGuiOLD implements ActionListener {
 
     private static JLabel userIdLable;
     private static JTextField userIdText;
@@ -75,7 +74,7 @@ public class LoginGui implements ActionListener {
 
         buttonLogin = new JButton("START GAME");
         buttonLogin.setBounds(105, 90, 125, 25);
-        buttonLogin.addActionListener(new LoginGui()); // To use the actionListener you need to implement the actionPerformed function
+        buttonLogin.addActionListener(new LoginGuiOLD()); // To use the actionListener you need to implement the actionPerformed function
         panel.add(buttonLogin);
         frame.setLocationRelativeTo(null); // make thr GUI shows in the middle
         ImageIcon icon = new ImageIcon("src/gameClient/pic/pikachu.png");

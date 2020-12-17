@@ -18,8 +18,11 @@
     In this part we have 4 important interfaces:
     
   1 . directed_weighted_graph - this interface implemented by the DWGraph_DS class and represents a directional weighted graph.
+  
   2 . node_data - this interface implemented by the NodeData class and represents a vertex in our graph.
+  
   3 . edge_data - this interface implemented by the EdgeData class and represents a edge in our graph.
+  
   4 . dw_graph_algorithms - this interface implemented by the WDGraph_Algo class and represents bunch of algorithms based on the graph we've created in DGraph.
 
    ### part 2 : building the Pokemon's challenge game

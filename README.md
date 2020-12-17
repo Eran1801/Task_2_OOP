@@ -2,7 +2,7 @@
 
 <img src ="src/gameClient/pic/pikachu.png" width="350" > 
 
-#### This Object Oriented Programming task was written by:
+### This Object Oriented Programming task was written by:
 
 * Etay Matzliah - 205987795
 * Eran Levy - 311382360

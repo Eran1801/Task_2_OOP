@@ -11,7 +11,16 @@ public class Ex2 {
     private static LoginGUI loginGUI;
 
     public static void main(String[] args) {
-        loginGUI = new LoginGUI();
+        if (args.length == 2) {
+            int ID = Integer.parseInt(args[0]);
+            int levelNumber = Integer.parseInt(args[1]);
+            Game_Manager gameManager = new Game_Manager();
+            gameManager.setGameData(ID, levelNumber);
+            new Thread(gameManager).start();
+        }
+        else {
+            loginGUI = new LoginGUI();
+        }
     }
 }
 
@@ -54,7 +63,7 @@ class LoginGUI extends JFrame {
 
         this.add(panel);
 
-        // now lets work on the panel //TODO check what this does - The guy in the tutorial didn't explain but you can see what happens without
+        // now lets work on the panel
         panel.setLayout(null);
 
         // JLabel is used to display a short string or an image icon. JLabel can display text, image or both
@@ -73,8 +82,12 @@ class LoginGUI extends JFrame {
         userIdText.addKeyListener(new KeyAdapter() { // limits the Id number up to 9
             @Override
             public void keyTyped(KeyEvent e) { // taking care that the user id will be max 9 numbers
-                if (userIdText.getText().length() >= 9)
-                    e.consume();
+                if (e.getKeyChar() != KeyEvent.VK_ENTER){
+                    if (userIdText.getText().length() >= 9)
+                        e.consume();
+                } else {
+                    validateData();
+                }
             }
         });
         userIdText.setBounds(120, 20, 165, 25);
@@ -83,6 +96,14 @@ class LoginGUI extends JFrame {
         levelNumberText = new JTextField();
 
         levelNumberText.setBounds(120, 50, 165, 25);
+        levelNumberText.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyChar() == KeyEvent.VK_ENTER){
+                    validateData();
+                }
+            }
+        });
         panel.add(levelNumberText);
 
         buttonLogin = new JButton("START GAME");
@@ -91,15 +112,19 @@ class LoginGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == buttonLogin){ // the source is the object that happens on this action
-                    if (userIdText.getText().length() == 9 && levelNumberText.getText().length() !=0){
-                        Game_Manager gameManager = new Game_Manager();
-                        gameManager.setGameData(Integer.parseInt(userIdText.getText()), Integer.parseInt(levelNumberText.getText()));
-                        new Thread(gameManager).start(); // TODO :here the game is starting ?
-                        thisGUI.dispose();
-                    }
+                    validateData();
                 }
             }
         });
         panel.add(buttonLogin);
+    }
+
+    private void validateData() {
+        if (userIdText.getText().length() == 9 && levelNumberText.getText().length() !=0){
+            Game_Manager gameManager = new Game_Manager();
+            gameManager.setGameData(Integer.parseInt(userIdText.getText()), Integer.parseInt(levelNumberText.getText()));
+            new Thread(gameManager).start();
+            thisGUI.dispose();
+        }
     }
 }

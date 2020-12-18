@@ -22,13 +22,14 @@ public class GameGUI extends JFrame{
     private Arena _ar;
     private gameClient.util.Range2Range _w2f;
     private Timer timer;
+    private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
 
     GameGUI(Arena _ar) {
         this._ar = _ar;
         ImageIcon iconGraph = new ImageIcon("src/gameClient/pic/Graph.png");
         this.setIconImage(iconGraph.getImage());
-        this.setSize( 800 , 600 );
+        this.setSize( (int)screenSize.getWidth() , (int)screenSize.getHeight() );
         this.setResizable(true);
 
         this.addComponentListener(new ComponentAdapter() {
@@ -166,6 +167,10 @@ public class GameGUI extends JFrame{
         //	g.drawString(""+n.getKey(), fp.ix(), fp.iy()-4*r);
     }
 
+    /**
+     * In this method we taking care that the frame and all the
+     * painting of the graph in the frame will be flawless
+     */
     public void refreshScreen() {
         timer = new Timer(0, new ActionListener() {
             @Override

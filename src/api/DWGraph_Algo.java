@@ -12,21 +12,33 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
     DWGraph_DS graph; //represents a pointer to the original graph.
 
+    /**
+     * Init the graph on which this set of algorithms operates on.
+     */
     @Override
     public void init(directed_weighted_graph g) {
         graph = (DWGraph_DS) g;
     }
 
+    /**
+     * Return the underlying graph of which this class works.
+     */
     @Override
     public directed_weighted_graph getGraph() {
         return this.graph;
     }
 
+    /**
+     * Compute a deep copy of this weighted graph.
+     */
     @Override
     public directed_weighted_graph copy() {
         return this.graph.deepCopy();
     }
 
+    /**
+     * Returns true if and only if (iff) there is a valid path from each node to each
+     */
     @Override
     public boolean isConnected() {
         int numOfNodes = this.graph.getV().size(); //get number of nodes in the original graph
@@ -68,6 +80,10 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return true;
     }
 
+    /**
+     * returns the length of the shortest path between src to dest
+     * Note: if no such path --> returns -1
+     */
     @Override
     public double shortestPathDist(int src, int dest) {
         if (src == dest) return 0;
@@ -109,6 +125,10 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return destNode.getWeight() != Double.MAX_VALUE ? destNode.getWeight() : -1; //return the destination weight or -1 if there is no path from src to dest.
     }
 
+    /**
+     * returns the the shortest path between src to dest - as an ordered List of nodes:
+     * src--> n1-->n2-->...dest
+     */
     @Override
     public List<node_data> shortestPath(int src, int dest) {
         DWGraph_DS g = (DWGraph_DS) this.copy();
@@ -170,6 +190,10 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     }
 
 
+    /**
+     * Saves this weighted (directed) graph to the given
+     * file name - in JSON format
+     */
     @Override
     public boolean save(String file) {
 
@@ -213,6 +237,12 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return true;
     }
 
+    /**
+     * This method load a graph to this graph algorithm.
+     * if the file was successfully loaded - the underlying graph
+     * of this class will be changed (to the loaded one), in case the
+     * graph was not loaded the original graph should remain "as is".
+     */
     @Override
     public boolean load(String file) {
 

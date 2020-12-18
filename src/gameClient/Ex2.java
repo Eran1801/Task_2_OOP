@@ -11,14 +11,15 @@ public class Ex2 {
     private static LoginGUI loginGUI;
 
     public static void main(String[] args) {
+
+        // This is for the cmd operation
         if (args.length == 2) {
             int ID = Integer.parseInt(args[0]);
             int levelNumber = Integer.parseInt(args[1]);
             Game_Manager gameManager = new Game_Manager();
             gameManager.setGameData(ID, levelNumber);
             new Thread(gameManager).start();
-        }
-        else {
+        } else {
             loginGUI = new LoginGUI();
         }
     }
@@ -40,6 +41,9 @@ class LoginGUI extends JFrame {
         this.thisGUI = this;
     }
 
+    /**
+     * This method takes care of the frame
+     */
     private void initLoginGUIFrame() {
 
         // Set Title
@@ -56,6 +60,9 @@ class LoginGUI extends JFrame {
         this.setIconImage(icon.getImage());
     }
 
+    /**
+     * This method takes care of the panel
+     */
     private void initLoginGUIPanel() {
 
         //create new panel
@@ -82,7 +89,7 @@ class LoginGUI extends JFrame {
         userIdText.addKeyListener(new KeyAdapter() { // limits the Id number up to 9
             @Override
             public void keyTyped(KeyEvent e) { // taking care that the user id will be max 9 numbers
-                if (e.getKeyChar() != KeyEvent.VK_ENTER){
+                if (e.getKeyChar() != KeyEvent.VK_ENTER) {
                     if (userIdText.getText().length() >= 9)
                         e.consume();
                 } else {
@@ -99,7 +106,7 @@ class LoginGUI extends JFrame {
         levelNumberText.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
-                if (e.getKeyChar() == KeyEvent.VK_ENTER){
+                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     validateData();
                 }
             }
@@ -109,9 +116,11 @@ class LoginGUI extends JFrame {
         buttonLogin = new JButton("START GAME");
         buttonLogin.setBounds(100, 90, 120, 25);
         buttonLogin.addActionListener(new ActionListener() {
+
+            // this method start to work when you press the 'buttonLogin' button
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (e.getSource() == buttonLogin){ // the source is the object that happens on this action
+                if (e.getSource() == buttonLogin) { // the source is the object that happens on this action
                     validateData();
                 }
             }
@@ -119,8 +128,11 @@ class LoginGUI extends JFrame {
         panel.add(buttonLogin);
     }
 
+    /**
+     * This method checks if the data that enter to the LoginGUI is valid and set the game
+     */
     private void validateData() {
-        if (userIdText.getText().length() == 9 && levelNumberText.getText().length() !=0){
+        if (userIdText.getText().length() == 9 && levelNumberText.getText().length() != 0) {
             Game_Manager gameManager = new Game_Manager();
             gameManager.setGameData(Integer.parseInt(userIdText.getText()), Integer.parseInt(levelNumberText.getText()));
             new Thread(gameManager).start();

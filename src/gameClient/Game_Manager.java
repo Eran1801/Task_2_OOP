@@ -77,8 +77,6 @@ public class Game_Manager implements Runnable  {
 
         gameGUI = new GameGUI(_ar);
 
-        //new Thread(new GameGUI(_ar)).start();
-
         String infoGameString = game.toString(); // returns all the data on the game level
         JSONObject line;
         try {
@@ -104,7 +102,6 @@ public class Game_Manager implements Runnable  {
                 }
 
                 game.addAgent(key_edge);
-                //game.addAgent(i);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -163,13 +160,7 @@ public class Game_Manager implements Runnable  {
     }
 
     private void runAlgorithms() {
-        counter++;
-        //System.out.println("Counter: " + counter);
-        /*if (counter==21){
-            System.out.println("test");
-        }*/
 
-        //System.out.println("Running Algorithms");
         String getPokemonsJson = game.getPokemons();
         List<CL_Pokemon> pokemons = Arena.json2Pokemons(getPokemonsJson);
         _ar.setPokemons(pokemons); // update pokemon's in the arena for the GUI
@@ -210,7 +201,6 @@ public class Game_Manager implements Runnable  {
                         minAgent = agent;
                     }
                     nearestAgentToPokemon.get(minAgent.getID()).add(minPath);
-                    //nearestAgentToPokemon.put(minAgent.getID(), minPath);
                 }
             }
 
@@ -230,9 +220,6 @@ public class Game_Manager implements Runnable  {
 
         }
 
-
-        //TODO: when there are more than 1 agent, check if the other agents are going to the nearest pokemon. if not maybe we rather just delete this algorithm.
-        // TODO: yes there are ! in game 17
         //there is a rare pokemon
         else {
             System.out.println("Found rare pokemon! value: " + rarestPokemon.getValue());

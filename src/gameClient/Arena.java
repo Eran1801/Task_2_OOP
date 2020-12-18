@@ -10,14 +10,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * This class represents a multi Agents Arena which move on a graph - grabs Pokemons and avoid the Zombies.
- *
- * @author boaz.benmoshe
+ /**
+ * This class represents a multi Agents Arena which move on a graph - grabs Pokemon's
  */
 public class Arena {
     public static final double EPS1 = 0.001, EPS2 = EPS1 * EPS1, EPS = EPS2;
@@ -54,7 +51,7 @@ public class Arena {
 
     public void setGraph(directed_weighted_graph g) {
         this._gg = g;
-    }//init();}
+    }
 
     private void init() {
         MIN = null;
@@ -102,15 +99,10 @@ public class Arena {
         return _gg;
     }
 
-    public List<String> get_info() {
-        return _info;
-    }
-
     public void set_info(List<String> _info) {
         this._info = _info;
     }
 
-    ////////////////////////////////////////////////////
     public static List<CL_Agent> getAgents(String aa, directed_weighted_graph gg) {
         ArrayList<CL_Agent> ans = new ArrayList<CL_Agent>();
         try {
@@ -149,7 +141,9 @@ public class Arena {
         return ans;
     }
 
-    //finds in which edge the pokemon exists and sets the pokemon's edge
+    /**
+     * This method finds in which edge the pokemon exists and sets the pokemon's edge
+     */
     public static void updateEdge(CL_Pokemon ps, directed_weighted_graph g) {
         //	oop_edge_data ans = null;
         Iterator<node_data> itr = g.getV().iterator();
@@ -263,8 +257,10 @@ public class Arena {
         return MostAndLeastRarePokemons; //return a pokemons array when index 0 is the most rare and index 1 is the least rare
     }
 
-
-    //returns the rarest pokemon if there is one. null if there is no rare pokemon
+    /**
+     * This method return the rarest pokemon if there is one. null if there is no rare pokemon
+     * rare pokemon = high value in relation of the other pokemons
+     */
     public CL_Pokemon getRarestPokemon() {
         final double rarePokemonThreshold = _pokemons.size() * 1.5;
         CL_Pokemon[] mostAndLeastRarePokemons = getMostAndLeastRarePokemons();
@@ -281,7 +277,10 @@ public class Arena {
         }
     }
 
-    //Calculates all agents paths to a pokemon and saves them. Returns the agent that can reach the pokemon fastest
+    /**
+     * This method Calculates all agents paths to a pokemon and saves them.
+     * Returns the agent that can reach the pokemon fastest
+     */
     public CL_Agent searchForNearestAgent(CL_Pokemon pokemon) {
 
         edge_data pokemonEdge = pokemon.get_edge();
@@ -297,13 +296,12 @@ public class Arena {
                 path = this._ggAlgo.shortestPath(fromNode, pokemonEdge.getSrc());
             }
             double distance = path.size() != 0 ? path.get(path.size() - 1).getWeight() : pokemonEdge.getWeight();
-            //distance /= agent.getSpeed(); //TODO: check this out, Theoretically this line should be good, but it's not. that way only 1 agent is eating all the pokemons and the other agents staying slow.
             if (distance < minDistance) {
                 minDistance = distance;
                 nearestAgent = agent;
             }
             if (path.size() >= 1) {
-                path.remove(0); //remove the first node //TODO: when an agent is idle, i don't think we need to remove the first node.
+                path.remove(0);
             }
             node_data lastNode = ((DWGraph_DS) (_gg)).copyNode(_gg.getNode(_gg.getNode(pokemonEdge.getDest()).getKey())); //copy the last node because we want to add weight to it and we don't want to do that on the original node
             lastNode.setWeight(minDistance + pokemonEdge.getWeight());
@@ -316,7 +314,7 @@ public class Arena {
     }
 
     public void setGraphAlgo(DWGraph_Algo dwgAlgo) {
-        this._ggAlgo=dwgAlgo;
+        this._ggAlgo = dwgAlgo;
     }
 
     public void setTime(long time) {

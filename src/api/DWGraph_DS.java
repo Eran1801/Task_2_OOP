@@ -20,12 +20,17 @@ public class DWGraph_DS implements directed_weighted_graph {
         this.modeCount = graph.getMC();
     }
 
-
+    /**
+     * return the node_data by the node_id
+     */
     @Override
     public node_data getNode(int key) {
         return nodes.get(key);
     }
 
+    /**
+     * returns the data of the edge (src,dest), null if none.
+     */
     @Override
     public edge_data getEdge(int src, int dest) {
         if (!nodes.containsKey(src)) return null;
@@ -33,11 +38,17 @@ public class DWGraph_DS implements directed_weighted_graph {
         return ((NodeData) sourceNode).getEdge(dest);
     }
 
+    /**
+     * adds a new node to the graph with the given node_data.
+     */
     @Override
     public void addNode(node_data n) {
         this.modeCount += this.nodes.putIfAbsent(n.getKey(), n) == null ? 1 : 0; // if the node was already in the graph - it will simply do nothing, if it wasn't - it will add it to the graph and increment modeCount by 1
     }
 
+    /**
+     * Connects an edge with weight w between node src to node dest.
+     */
     @Override
     public void connect(int src, int dest, double w) {
         if (src == dest) return; //do nothing if trying to connect a node to itself
@@ -49,16 +60,29 @@ public class DWGraph_DS implements directed_weighted_graph {
         modeCount++;
     }
 
+    /**
+     * This method returns a pointer (shallow copy) for the
+     * collection representing all the nodes in the graph.
+     */
     @Override
     public Collection<node_data> getV() {
         return this.nodes.values();
     }
 
+    /**
+     * This method returns a pointer (shallow copy) for the
+     * collection representing all the edges getting out of
+     * the given node (all the edges starting (source) at the given node).
+     */
     @Override
     public Collection<edge_data> getE(int node_id) {
         return ((NodeData) this.nodes.get(node_id)).getNeighborEdges().values();
     }
 
+    /**
+     * Deletes the node (with the given ID) from the graph -
+     * and removes all edges which starts or ends at this node.
+     */
     @Override
     public node_data removeNode(int key) {
         if (!this.nodes.containsKey(key))
@@ -91,6 +115,9 @@ public class DWGraph_DS implements directed_weighted_graph {
 
     }
 
+    /**
+     * Deletes the edge from the graph.
+     */
     @Override
     public edge_data removeEdge(int src, int dest) {
         NodeData nodeToRemoveEdgeFrom = (NodeData) this.nodes.get(src);
@@ -104,32 +131,48 @@ public class DWGraph_DS implements directed_weighted_graph {
         return edgeToRemove;
     }
 
+    /**
+     * This method return the number of nodes in the graph
+     */
     @Override
     public int nodeSize() {
         return this.nodes.size();
     }
 
+    /**
+     * This method return the number of edges in the graph
+     */
     @Override
     public int edgeSize() {
         return this.numOfEdges;
     }
 
+    /**
+     * Returns the Mode Count - for testing changes in the graph.
+     */
     @Override
     public int getMC() {
         return this.modeCount;
     }
 
+    /**
+     * This method get call from the DWGraph_Algo to the 'copy' method
+     */
     public directed_weighted_graph deepCopy() {
         DWGraph_DS copyGraph = new DWGraph_DS(this); //create a new graph with the original graph data (only primitives)
-        HashMap<Integer, node_data> copyNodesMap = new HashMap<Integer, node_data>(); //create a new nodes HashMap for the new graph
+        HashMap<Integer, node_data> copyNodesMap = new HashMap<>(); //create a new nodes HashMap for the new graph
         for (node_data node : nodes.values()) { //loop through all nodes in the original graph
             copyNodesMap.put(node.getKey(), new NodeData((NodeData) node)); //makes a duplicate of the original HashMap
         }
         copyGraph.nodes = copyNodesMap; //set the new graph nodes to the new HashMap we made.
         return copyGraph;
     }
-    public node_data copyNode(node_data node){
-        NodeData nodeUpCasted = (NodeData)node;
+
+    /**
+     * this method is for the Arena class in the searchForNearestAgent method
+     */
+    public node_data copyNode(node_data node) {
+        NodeData nodeUpCasted = (NodeData) node;
         return new NodeData(nodeUpCasted);
     }
 }
@@ -139,7 +182,7 @@ public class DWGraph_DS implements directed_weighted_graph {
 class NodeData implements node_data {
 
     private int key;
-    private HashMap<Integer, edge_data> neighborEdges; //edges coming out from this node.
+    private HashMap<Integer, edge_data> neighborEdges; // edges coming out from this node.
     private HashMap<Integer, edge_data> edgesConnectedToThisNode; // when we want to remove a node, we need to have a reference to the nodes that are connected to this node.
     private double weight;
     private String info; //represents if we visited the node in algorithms (WHITE = Not visited, BLACK= = visited)
@@ -154,6 +197,7 @@ class NodeData implements node_data {
         this.weight = node.weight;
         this.location = node.location;
 
+        // when you create a new node you also transfer all his edges
         this.neighborEdges = new HashMap<Integer, edge_data>();
         for (edge_data edge : node.neighborEdges.values()) {
             this.neighborEdges.put(edge.getDest(), new EdgeData((EdgeData) edge));
@@ -165,32 +209,47 @@ class NodeData implements node_data {
         }
     }
 
+    // create a new node constructor
     public NodeData(int key) {
         this.key = key;
-        this.neighborEdges = new HashMap<Integer, edge_data>();
-        this.edgesConnectedToThisNode = new HashMap<Integer, edge_data>();
+        this.neighborEdges = new HashMap<>();
+        this.edgesConnectedToThisNode = new HashMap<>();
         this.weight = Double.MAX_VALUE;
         this.info = "WHITE";
         this.tag = -1;
         this.location = new Location(0, 0, 0);
     }
 
+
+    /**
+     * this method calls from a node that want to make an edge between him and a destNode with the weight w
+     * we use it in the 'connect' method
+     */
     public void connectEdge(NodeData destNode, double w) {
         EdgeData edge = new EdgeData(this.getKey(), destNode.getKey(), w);
         this.neighborEdges.put(destNode.getKey(), edge);
         destNode.edgesConnectedToThisNode.put(this.getKey(), edge);
     }
 
+    /**
+     * Returns the key (id) associated with this node.
+     */
     @Override
     public int getKey() {
         return this.key;
     }
 
+    /**
+     * Returns the location of this node, if none return null.
+     */
     @Override
     public geo_location getLocation() {
         return location;
     }
 
+    /**
+     * Allows changing this node's location.
+     */
     @Override
     public void setLocation(geo_location p) {
         this.location.setX(p.x());
@@ -198,58 +257,93 @@ class NodeData implements node_data {
         this.location.setZ(p.z());
     }
 
+    /**
+     * Returns the weight associated with this node.
+     */
     @Override
     public double getWeight() {
         return this.weight;
     }
 
+    /**
+     * Allows changing this node's weight.
+     */
     @Override
     public void setWeight(double w) {
         this.weight = w;
 
     }
 
+    /**
+     * Returns the remark (meta data) associated with this node.
+     */
     @Override
     public String getInfo() {
         return this.info;
     }
 
+    /**
+     * Allows changing the remark (meta data) associated with this node.
+     */
     @Override
     public void setInfo(String s) {
         this.info = s;
 
     }
 
+    /**
+     * Returns the Temporal data (aka color: e,g, white, gray, black)
+     */
     @Override
     public int getTag() {
         return this.tag;
     }
 
+    /**
+     * Allows to change the Temporal data (aka color: e,g, white, gray, black)
+     */
     @Override
     public void setTag(int t) {
         this.tag = t;
 
     }
 
+    /**
+     * This method gets a key of a node and returns boolean if there is a neighbor to him
+     */
     public boolean hasNi(int nodeKey) {
         return this.neighborEdges.get(nodeKey) != null ? true : false;
     }
 
+    /**
+     * This method returns HashMap of neighbors of the node that calls this method
+     */
     public HashMap<Integer, edge_data> getNi() {
         return neighborEdges;
     }
 
+    /**
+     * This method uses to get an edge between two nodes in the 'getEdge' method
+     * that override from interface of directed_weighted_graph
+     */
     public edge_data getEdge(int nodeKey) {
         return this.neighborEdges.get(nodeKey);
     }
 
+    /**
+     * This method return an HashMap of a specific node that represent the neighbor that comes out from this node
+     */
     public HashMap<Integer, edge_data> getNeighborEdges() {
         return this.neighborEdges;
     }
 
+    /**
+     * This method return an HashMap of a specific node that represent the neighbor that comes in to this node
+     */
     public HashMap<Integer, edge_data> getEdgesConnectedToThisNode() {
         return this.edgesConnectedToThisNode;
     }
+
 
     @Override
     public boolean equals(Object o) {

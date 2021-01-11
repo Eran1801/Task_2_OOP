@@ -263,15 +263,23 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             for (int i = 0; i < nodesJsonArray.size(); i++) {
                 // nodeJsonObject holds the nodesArray in 'i' index
                 JsonObject nodeJsonObject = nodesJsonArray.get(i).getAsJsonObject();
-                String pos = nodeJsonObject.get("pos").getAsString();
-                int key = nodeJsonObject.get("id").getAsInt();
-                String[] posArrayString = pos.split(",");
-                Double[] posArray = new Double[posArrayString.length];
-                for (int j = 0; j < posArrayString.length; j++) {
-                    posArray[j] = Double.parseDouble(posArrayString[j]);
+                geo_location newLocation;
+                if (!nodeJsonObject.has("pos")) {
+                    Random r = new Random();
+                    double random_number_x = 35.185 + (35.215 - 35.185) * r.nextDouble();
+                    double random_number_y = 32.098 + (32.11 - 32.098) * r.nextDouble();
+                    newLocation = new Location(random_number_x, random_number_y, 0);
+                } else {
+                    String pos = nodeJsonObject.get("pos").getAsString();
+                    String[] posArrayString = pos.split(",");
+                    Double[] posArray = new Double[posArrayString.length];
+                    for (int j = 0; j < posArrayString.length; j++) {
+                        posArray[j] = Double.parseDouble(posArrayString[j]);
+                    }
+                    newLocation = new Location(posArray[0], posArray[1], posArray[2]);
                 }
+                int key = nodeJsonObject.get("id").getAsInt();
                 node_data newNode = new NodeData(key);
-                geo_location newLocation = new Location(posArray[0], posArray[1], posArray[2]);
                 newNode.setLocation(newLocation);
                 loadedGraphFromJson.addNode(newNode);
             }
@@ -293,6 +301,108 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             return false;
         }
         return true;
+    }
+
+    public List<List<Integer>> connected_components () {
+
+        List<List<Integer>> ans_list = new ArrayList<>();
+        List<Integer> check_for_components_in_nodes = new ArrayList<>(graph.getNodes().keySet());
+
+        while (!check_for_components_in_nodes.isEmpty()){
+            int node_key = check_for_components_in_nodes.get(0);
+            List<Integer> scc = connected_component(node_key);
+            ans_list.add(scc);
+            for ( int connected_node : scc){
+                // remove the nodes that we found their sccs from check_for_components_in_nodes
+                check_for_components_in_nodes.remove((Integer)connected_node);
+            }
+
+        }
+        return ans_list;
+    }
+
+    public List<Integer> connected_component(int id) {
+
+        List<Integer> list = new ArrayList<Integer>();
+
+        if (graph == null) return list;
+
+        node_data node = graph.getNode(id);
+
+        if (node == null) return list;
+
+        List<Integer> connected_from_node = bfs_from(node);
+        List<Integer> connected_to_node = bfs_to(node);
+
+        // keeps only the variables that are in the intersection of connected_from_node and connected_to_node
+        connected_from_node.retainAll(connected_to_node);
+
+        return connected_from_node;
+
+    }
+
+
+    private List<Integer> bfs_from(node_data starting_node) {
+
+        Queue<node_data> queue = new LinkedList<node_data>();
+        queue.add(starting_node);
+
+        List<Integer> list_connected_from = new ArrayList<Integer>();
+        list_connected_from.add(starting_node.getKey());
+
+        HashMap<Integer, Boolean> visited = new HashMap<>();
+
+        for (int node_key : graph.getNodes().keySet()) {
+            visited.put(node_key, false);
+        }
+
+        visited.put(starting_node.getKey(), true);
+
+        while (!queue.isEmpty()) {
+
+            node_data node_from_queue = queue.poll();
+            for (edge_data edge_from_node : ((NodeData) node_from_queue).getNeighborEdges().values()) {
+                int edge_from_node_key = edge_from_node.getDest();
+                if (!visited.get(edge_from_node_key)) {
+                    queue.add(graph.getNode(edge_from_node_key));
+                    list_connected_from.add(edge_from_node_key);
+                    visited.put(edge_from_node_key, true);
+                }
+            }
+        }
+
+        return list_connected_from;
+    }
+
+    private List<Integer> bfs_to(node_data starting_node) {
+
+        Queue<node_data> queue = new LinkedList<node_data>();
+        queue.add(starting_node);
+
+        List<Integer> list_connected_to = new ArrayList<Integer>();
+        list_connected_to.add(starting_node.getKey());
+
+        HashMap<Integer, Boolean> visited = new HashMap<>();
+
+        for (int node_key : graph.getNodes().keySet()) {
+            visited.put(node_key, false);
+        }
+
+        visited.put(starting_node.getKey(), true);
+
+        while (!queue.isEmpty()) {
+
+            node_data node_from_queue = queue.poll();
+            for (edge_data edge_from_node : ((NodeData) node_from_queue).getEdgesConnectedToThisNode().values()) {
+                int edge_from_node_key = edge_from_node.getSrc();
+                if (!visited.get(edge_from_node_key)) {
+                    queue.add(graph.getNode(edge_from_node_key));
+                    list_connected_to.add(edge_from_node_key);
+                    visited.put(edge_from_node_key, true);
+                }
+            }
+        }
+        return list_connected_to;
     }
 
 }

@@ -175,6 +175,10 @@ public class DWGraph_DS implements directed_weighted_graph {
         NodeData nodeUpCasted = (NodeData) node;
         return new NodeData(nodeUpCasted);
     }
+
+    public HashMap<Integer, node_data>getNodes() {
+        return nodes;
+    }
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------------------------------------------

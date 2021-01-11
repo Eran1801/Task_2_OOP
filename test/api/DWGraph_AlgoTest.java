@@ -3,8 +3,7 @@ package api;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -136,5 +135,38 @@ class DWGraph_AlgoTest {
         ga.load("graph.json");
 
         assertEquals(ga.getGraph().getEdge(0, 3).getWeight(), 2.5, epsilon);
+    }
+
+    @Test
+    void connected_components(){
+
+        directed_weighted_graph g = createSmallGraphWithSomeConnections();
+        DWGraph_Algo ga = new DWGraph_Algo();
+        ga.init(g);
+
+        List<List<Integer>> check_list = new ArrayList<>();
+        List<Integer> tempList = Arrays.asList(0,1,3,2,4);
+        check_list.add(tempList);
+        tempList = Collections.singletonList(5);
+        check_list.add(tempList);
+
+
+        assertEquals( ga.connected_components(),check_list);
+
+    }
+
+    @Test
+    void connected_component() {
+
+        directed_weighted_graph g = createSmallGraphWithSomeConnections();
+        DWGraph_Algo ga = new DWGraph_Algo();
+        ga.init(g);
+
+        List<Integer> check_list = Collections.singletonList(5);
+        List<Integer> check_list2 = Arrays.asList(1,2,4,0,3);
+
+        assertEquals(ga.connected_component(5),check_list);
+        assertEquals(ga.connected_component(1),check_list2);
+
     }
 }
